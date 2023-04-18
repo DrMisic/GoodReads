@@ -6,6 +6,10 @@ import java.util.HashSet;
 import java.util.Set;
 @Entity
 public class Autor extends Korisnik implements Serializable{
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long id;
     @Column
     private boolean aktivan;
     @OneToMany(mappedBy = "autor",fetch = FetchType.LAZY, cascade = CascadeType.ALL,  orphanRemoval = true)

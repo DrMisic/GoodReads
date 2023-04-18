@@ -12,7 +12,7 @@ public class StavkaPolice implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     @OneToMany(mappedBy = "stavkapolice",fetch = FetchType.LAZY, cascade = CascadeType.ALL,  orphanRemoval = true)
-    private Set<Recenzija> recenzija = new HashSet<Recenzija>();
+    private Set<Recenzija> recenzija = new HashSet<>();
 
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private Knjiga knjiga;

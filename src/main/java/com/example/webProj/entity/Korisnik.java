@@ -12,7 +12,7 @@ enum Uloge {
     ADMINISTRATOR
 }
 @Entity
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@Inheritance (strategy = InheritanceType.SINGLE_TABLE)
 public class Korisnik implements Serializable {
 
     @Id
