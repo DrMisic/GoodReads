@@ -31,7 +31,7 @@ public class ZahtevZaAktivacijuNalogaAutora implements Serializable {
     @Column
     private Status status;
 
-    @Column
+    @OneToOne
     private Autor autor;
 
     public long getId() {
