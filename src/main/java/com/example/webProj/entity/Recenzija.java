@@ -1,6 +1,6 @@
 package com.example.webProj.entity;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.HashSet;
@@ -22,4 +22,44 @@ public class Recenzija implements Serializable {
 
     @OneToOne
     private Korisnik korisnik;
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public float getOcena() {
+        return ocena;
+    }
+
+    public void setOcena(float ocena) {
+        this.ocena = ocena;
+    }
+
+    public String getTekst() {
+        return tekst;
+    }
+
+    public void setTekst(String tekst) {
+        this.tekst = tekst;
+    }
+
+    public Date getDatum_recenzije() {
+        return datum_recenzije;
+    }
+
+    public void setDatum_recenzije(Date datum_recenzije) {
+        this.datum_recenzije = datum_recenzije;
+    }
+
+    public Korisnik getKorisnik() {
+        return korisnik;
+    }
+
+    public void setKorisnik(Korisnik korisnik) {
+        this.korisnik = korisnik;
+    }
 }

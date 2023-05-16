@@ -1,13 +1,12 @@
 package com.example.webProj.entity;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.util.Date;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-
 public class Knjiga implements Serializable {
 
     @Id
@@ -18,7 +17,7 @@ public class Knjiga implements Serializable {
 
     //popraviti tip za  naslovnu fotografiju
     @Column
-    private Byte[] naslovna_fotografija;
+    private String naslovna_fotografija;
 
 
     @Column
@@ -56,11 +55,11 @@ public class Knjiga implements Serializable {
         this.naslov = naslov;
     }
 
-    public Byte[] getNaslovna_fotografija() {
+    public String getNaslovna_fotografija() {
         return naslovna_fotografija;
     }
 
-    public void setNaslovna_fotografija(Byte[] naslovna_fotografija) {
+    public void setNaslovna_fotografija(String  naslovna_fotografija) {
         this.naslovna_fotografija = naslovna_fotografija;
     }
 

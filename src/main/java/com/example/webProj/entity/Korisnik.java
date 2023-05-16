@@ -1,8 +1,8 @@
 package com.example.webProj.entity;
 
-import javax.persistence.*;
-import javax.validation.constraints.Pattern;
+import jakarta.persistence.*;
 import java.io.Serializable;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -28,25 +28,32 @@ public class Korisnik implements Serializable {
     private String korisnicko_ime;
 
     @Column(unique = true)
-    @Pattern(regexp="[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\."
-            +"[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@"
-            +"(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?",
-            message="{invalid.email}")
     private String email;
     @Column
     private String lozinka;
 
     @Column
-    private String datum_rodjenja;
+    private Date datum_rodjenja;
     // moram naći pravi tip podatka za profilnu sliku
     @Column
-    private Byte[] profilna_slika;
+    private String profilna_slika;
 
     @Column
     private String opis;
 
     @Column
     private Uloge uloga;
+
+    @OneToMany
+    private Set<Polica> polica = new HashSet<>();
+
+    public Set<Polica> getPolica() {
+        return polica;
+    }
+
+    public void setPolice(Set<Polica> polica) {
+        this.polica = polica;
+    }
 
     public long getId() {
         return id;
@@ -96,19 +103,19 @@ public class Korisnik implements Serializable {
         this.lozinka = lozinka;
     }
 
-    public String getDatum_rodjenja() {
+    public Date getDatum_rodjenja() {
         return datum_rodjenja;
     }
 
-    public void setDatum_rodjenja(String datum_rodjenja) {
+    public void setDatum_rodjenja(Date datum_rodjenja) {
         this.datum_rodjenja = datum_rodjenja;
     }
 
-    public Byte[] getProfilna_slika() {
+    public String getProfilna_slika() {
         return profilna_slika;
     }
 
-    public void setProfilna_slika(Byte[] profilna_slika) {
+    public void setProfilna_slika(String profilna_slika) {
         this.profilna_slika = profilna_slika;
     }
 
@@ -127,4 +134,6 @@ public class Korisnik implements Serializable {
     public void setUloga(Uloge uloga) {
         this.uloga = uloga;
     }
+
+
 }

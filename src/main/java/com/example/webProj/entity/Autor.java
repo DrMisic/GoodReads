@@ -1,6 +1,6 @@
 package com.example.webProj.entity;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
@@ -12,7 +12,7 @@ public class Autor extends Korisnik implements Serializable{
     private long id;
     @Column
     private boolean aktivan;
-    @OneToMany(mappedBy = "autor",fetch = FetchType.LAZY, cascade = CascadeType.ALL,  orphanRemoval = true)
+    @OneToMany
     private Set<Knjiga> spisakKnjiga = new HashSet<>();
 
     public boolean isAktivan() {

@@ -1,6 +1,6 @@
 package com.example.webProj.entity;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
@@ -17,8 +17,8 @@ public class Polica implements Serializable{
     @Column
     private boolean daLiJePrimarno;
 
-    @OneToMany(mappedBy = "polica",fetch = FetchType.LAZY,orphanRemoval = true,cascade = CascadeType.ALL)
-    private StavkaPolice stavkaPolice;
+    @OneToMany
+    private Set<StavkaPolice> stavkaPolice = new HashSet<>();
 
     public long getId() {
         return id;
@@ -43,11 +43,11 @@ public class Polica implements Serializable{
         this.daLiJePrimarno = daLiJePrimarno;
     }
 
-    public StavkaPolice getStavkaPolice() {
+    public Set<StavkaPolice> getStavkaPolice() {
         return stavkaPolice;
     }
 
-    public void setStavkaPolice(StavkaPolice stavkaPolice) {
+    public void setStavkaPolice(Set<StavkaPolice> stavkaPolice) {
         this.stavkaPolice = stavkaPolice;
     }
 }

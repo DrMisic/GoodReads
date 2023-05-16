@@ -1,6 +1,6 @@
 package com.example.webProj.entity;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
@@ -11,7 +11,7 @@ public class StavkaPolice implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-    @OneToMany(mappedBy = "stavkapolice",fetch = FetchType.LAZY, cascade = CascadeType.ALL,  orphanRemoval = true)
+    @OneToMany
     private Set<Recenzija> recenzija = new HashSet<>();
 
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
