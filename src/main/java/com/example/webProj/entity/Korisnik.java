@@ -17,7 +17,7 @@ public class Korisnik implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
     @Column
     private String ime;
 
@@ -49,10 +49,6 @@ public class Korisnik implements Serializable {
 
     public Set<Polica> getPolica() {
         return polica;
-    }
-
-    public void setPolice(Set<Polica> polica) {
-        this.polica = polica;
     }
 
     public long getId() {
@@ -135,5 +131,8 @@ public class Korisnik implements Serializable {
         this.uloga = uloga;
     }
 
+    public void setPolica(Set<Polica> polica) {
+        this.polica = polica;
+    }
 
 }

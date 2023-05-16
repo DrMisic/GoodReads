@@ -9,7 +9,7 @@ import java.util.Set;
 public class Zanr implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
     @Column
     private String naslov;

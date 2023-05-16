@@ -15,7 +15,7 @@ enum Status {
 public class ZahtevZaAktivacijuNalogaAutora implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
     @Column
     private String email;
 

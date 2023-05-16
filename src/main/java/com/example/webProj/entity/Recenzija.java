@@ -10,7 +10,7 @@ import java.util.Set;
 public class Recenzija implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
     @Column
     private float ocena;
 
