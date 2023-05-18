@@ -1,62 +1,78 @@
-package com.example.webProj.entity;
+package com.example.webProj.dto;
 
-import jakarta.persistence.*;
-import java.io.Serializable;
+import com.example.webProj.entity.Polica;
+import com.example.webProj.entity.Korisnik;
+
+
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
-//TODO uloge popraviti u KorisnikDto
 
-@Entity
-@Inheritance (strategy = InheritanceType.SINGLE_TABLE)
-public class Korisnik implements Serializable {
 
-    public enum Uloge {
-        KORISNIK,
-        AUTOR,
-        ADMINISTRATOR
-    }
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class KorisnikDto {
+
     private Long id;
-    @Column
+
     private String ime;
 
-    @Column
     private String prezime;
 
-    @Column(unique = true)
     private String korisnicko_ime;
 
-    @Column(unique = true)
     private String email;
-    @Column
+
     private String lozinka;
 
-    @Column
     private Date datum_rodjenja;
     // moram naći pravi tip podatka za profilnu sliku
-    @Column
+
     private String profilna_slika;
 
-    @Column
+
     private String opis;
 
-    @Column
-    private Uloge uloga;
 
-    @OneToMany
+    private Korisnik.Uloge uloga;
+
+
     private Set<Polica> polica = new HashSet<>();
 
-    public Set<Polica> getPolica() {
-        return polica;
+    public KorisnikDto(){}
+
+    public KorisnikDto(Long id, String ime, String prezime, String korisnicko_ime, String email, String lozinka, Date datum_rodjenja, String profilna_slika,Korisnik.Uloge uloga, String opis, Set<Polica> polica) {
+        this.id = id;
+        this.ime = ime;
+        this.prezime = prezime;
+        this.korisnicko_ime = korisnicko_ime;
+        this.email = email;
+        this.lozinka = lozinka;
+        this.datum_rodjenja = datum_rodjenja;
+        this.profilna_slika = profilna_slika;
+        this.opis = opis;
+        this.uloga = uloga;
+        this.polica = polica;
     }
 
-    public long getId() {
+    public KorisnikDto(Korisnik korisnik)
+    {
+        this.id = korisnik.getId();
+        this.ime = korisnik.getIme();
+        this.prezime = korisnik.getPrezime();
+        this.korisnicko_ime = korisnik.getKorisnicko_ime();
+        this.email = korisnik.getEmail();
+        this.lozinka = korisnik.getLozinka();
+        this.datum_rodjenja = korisnik.getDatum_rodjenja();
+        this.profilna_slika = korisnik.getProfilna_slika();
+        this.opis = korisnik.getOpis();
+        this.uloga = korisnik.getUloga();
+        this.polica = korisnik.getPolica();
+    }
+
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -66,6 +82,14 @@ public class Korisnik implements Serializable {
 
     public void setIme(String ime) {
         this.ime = ime;
+    }
+
+    public Korisnik.Uloge getUloga() {
+        return uloga;
+    }
+
+    public void setUloga(Korisnik.Uloge uloga) {
+        this.uloga = uloga;
     }
 
     public String getPrezime() {
@@ -124,16 +148,11 @@ public class Korisnik implements Serializable {
         this.opis = opis;
     }
 
-    public Uloge getUloga() {
-        return uloga;
-    }
-
-    public void setUloga(Uloge uloga) {
-        this.uloga = uloga;
+    public Set<Polica> getPolica() {
+        return polica;
     }
 
     public void setPolica(Set<Polica> polica) {
         this.polica = polica;
     }
-
 }
