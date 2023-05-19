@@ -12,7 +12,7 @@ public class Autor extends Korisnik implements Serializable{
     private Long id;
     @Column
     private boolean aktivan;
-    @OneToMany
+    @OneToMany()
     private Set<Knjiga> spisakKnjiga = new HashSet<>();
 
     public boolean isAktivan() {

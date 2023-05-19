@@ -26,7 +26,7 @@ public class Korisnik implements Serializable {
     private String prezime;
 
     @Column(unique = true)
-    private String korisnicko_ime;
+    private String korisnickoIme;
 
     @Column(unique = true)
     private String email;
@@ -77,11 +77,11 @@ public class Korisnik implements Serializable {
     }
 
     public String getKorisnicko_ime() {
-        return korisnicko_ime;
+        return korisnickoIme;
     }
 
     public void setKorisnicko_ime(String korisnicko_ime) {
-        this.korisnicko_ime = korisnicko_ime;
+        this.korisnickoIme = korisnicko_ime;
     }
 
     public String getEmail() {
