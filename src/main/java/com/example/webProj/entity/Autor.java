@@ -1,5 +1,6 @@
 package com.example.webProj.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import java.io.Serializable;
 import java.util.HashSet;
@@ -12,6 +13,7 @@ public class Autor extends Korisnik implements Serializable{
     private Long id;
     @Column
     private boolean aktivan;
+    @JsonIgnore
     @OneToMany()
     private Set<Knjiga> spisakKnjiga = new HashSet<>();
 

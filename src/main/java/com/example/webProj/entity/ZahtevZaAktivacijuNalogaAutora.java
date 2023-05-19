@@ -35,6 +35,9 @@ public class ZahtevZaAktivacijuNalogaAutora implements Serializable {
     @OneToOne
     private Autor autor;
 
+    public ZahtevZaAktivacijuNalogaAutora() {
+    }
+
     public long getId() {
         return id;
     }

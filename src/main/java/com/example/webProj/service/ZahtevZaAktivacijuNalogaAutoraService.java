@@ -25,6 +25,7 @@ public class ZahtevZaAktivacijuNalogaAutoraService {
 
         return null;
     }
+
     public ZahtevZaAktivacijuNalogaAutora findZahtevZaAktivacijuNalogaAutoraByEmail(String email){return zahtevZaAktivacijuNalogaAutoraRepository.getZahtevZaAktivacijuNalogaAutoraByEmail(email);}
     public ZahtevZaAktivacijuNalogaAutora findZahtevZaAktivacijuNalogaAutoraByAutor(Autor autor){return zahtevZaAktivacijuNalogaAutoraRepository.getZahtevZaAktivacijuNalogaAutoraByAutor(autor);}
     public List<ZahtevZaAktivacijuNalogaAutora> findZahtevZaAktivacijuNalogaAutoraByStatus(ZahtevZaAktivacijuNalogaAutora.Status status){return  zahtevZaAktivacijuNalogaAutoraRepository.getZahtevZaAktivacijuNalogaAutoraByStatus(status);}

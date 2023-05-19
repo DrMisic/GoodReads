@@ -1,13 +1,16 @@
 package com.example.webProj.controller;
 
+import com.example.webProj.dto.ApplyForAutorDto;
 import com.example.webProj.entity.Autor;
 import com.example.webProj.entity.ZahtevZaAktivacijuNalogaAutora;
 import com.example.webProj.service.ZahtevZaAktivacijuNalogaAutoraService;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 import java.util.Date;
 import java.util.List;
@@ -36,6 +39,25 @@ public class ZahtevZaAktivacijuNalogaAutoraController {
     public String saveZahtevZaAktivacijuNalogaAutora(ZahtevZaAktivacijuNalogaAutora zahtevZaAktivacijuNalogaAutora){
         this.zahtevZaAktivacijuNalogaAutoraService.save(zahtevZaAktivacijuNalogaAutora);
         return "Uspješno sačuvan zahtjev za aktivaciju naloga autora";
+    }
+
+    @PostMapping(path = "/api/podnesi_zahtev_za_aktivaciju_naloga_autora")
+    public ResponseEntity<String> applyForAutor(@RequestBody  ApplyForAutorDto applyForAutorDto, HttpSession session)
+    {
+        if(applyForAutorDto.getEmail().isEmpty() || applyForAutorDto.getBrojTelefona().isEmpty())
+        {
+            return new ResponseEntity("Unesite sve podatke", HttpStatus.BAD_REQUEST);
+        }
+        ZahtevZaAktivacijuNalogaAutora zahtevZaAktivacijuNalogaAutora = new ZahtevZaAktivacijuNalogaAutora();
+        zahtevZaAktivacijuNalogaAutora.setEmail(applyForAutorDto.getEmail());
+        zahtevZaAktivacijuNalogaAutora.setTelefon(applyForAutorDto.getBrojTelefona());
+        zahtevZaAktivacijuNalogaAutora.setPoruka(applyForAutorDto.getPoruka());
+        zahtevZaAktivacijuNalogaAutora.setStatus(ZahtevZaAktivacijuNalogaAutora.Status.NA_CEKANJU);
+        java.util.Date currentDate = new java.util.Date();
+        zahtevZaAktivacijuNalogaAutora.setDatum(currentDate);
+        this.zahtevZaAktivacijuNalogaAutoraService.save(zahtevZaAktivacijuNalogaAutora);
+
+        return ResponseEntity.ok("Uspješno poslat zahtjev");
     }
 
 }

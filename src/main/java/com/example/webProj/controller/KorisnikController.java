@@ -4,6 +4,7 @@ import com.example.webProj.dto.KorisnikDto;
 import com.example.webProj.dto.LoginDto;
 import com.example.webProj.dto.SignUpDto;
 import com.example.webProj.entity.Korisnik;
+import com.example.webProj.entity.Polica;
 import com.example.webProj.service.KorisnikService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +12,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @RestController
 public class KorisnikController {
@@ -57,19 +60,35 @@ public class KorisnikController {
         {
             return new ResponseEntity("Lozinke se ne poklapaju",HttpStatus.BAD_REQUEST);
         }
-        Korisnik korisnik = korisnikService.findKorisnikByEmail(signUpDto.getEmail());
-        if(korisnik != null)
+        Korisnik korisnikTest = korisnikService.findKorisnikByEmail(signUpDto.getEmail());
+        if(korisnikTest != null)
         {
             return new ResponseEntity("Email je zauzet",HttpStatus.CONFLICT);
         }
-        korisnik = korisnikService.findKorisnikByKorisnickoIme(signUpDto.getKorisnickoIme());
-        if(korisnik !=null)
+        korisnikTest = korisnikService.findKorisnikByKorisnickoIme(signUpDto.getKorisnickoIme());
+        if(korisnikTest !=null)
         {
             return new ResponseEntity("Korisnicko ime je zauzeto",HttpStatus.CONFLICT);
         }
+        Korisnik korisnik = new Korisnik();
+        korisnik.setIme(signUpDto.getIme());
+        korisnik.setPrezime(signUpDto.getPrezime());
+        korisnik.setEmail(signUpDto.getEmail());
+        korisnik.setKorisnicko_ime(signUpDto.getKorisnickoIme());
+        korisnik.setLozinka(signUpDto.getLozinka());
+        korisnik.setUloga(Korisnik.Uloge.CITALAC);
+        Polica primarnaPolicaWantToRead = new Polica("Want to read",true);
+        Polica primarnaPolicaCurrentlyReading = new Polica("Currently reading",true);
+        Polica primarnaPolicaRead = new Polica("Read",true);
+        Set<Polica> police = new HashSet<>();
+        police.add(primarnaPolicaWantToRead);
+        police.add(primarnaPolicaCurrentlyReading);
+        police.add(primarnaPolicaRead);
+        korisnik.setPolica(police);
+
         session.setAttribute("korisnik",korisnik);
         //saveKorisnik(korisnik);
-        //this.korisnikService.save(korisnik);
+        this.korisnikService.save(korisnik);
         return ResponseEntity.ok("Uspješno registrovan");
     }
     @GetMapping(path = "/api/korisnici")
