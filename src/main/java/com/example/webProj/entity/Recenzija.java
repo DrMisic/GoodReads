@@ -18,7 +18,7 @@ public class Recenzija implements Serializable {
     private String tekst;
 
     @Column
-    private Date datum_recenzije;
+    private Date datumRecenzije;
 
     @OneToOne
     private Korisnik korisnik;
@@ -48,11 +48,11 @@ public class Recenzija implements Serializable {
     }
 
     public Date getDatum_recenzije() {
-        return datum_recenzije;
+        return datumRecenzije;
     }
 
     public void setDatum_recenzije(Date datum_recenzije) {
-        this.datum_recenzije = datum_recenzije;
+        this.datumRecenzije = datum_recenzije;
     }
 
     public Korisnik getKorisnik() {

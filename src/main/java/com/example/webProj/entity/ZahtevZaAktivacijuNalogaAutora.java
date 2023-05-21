@@ -6,13 +6,14 @@ import java.io.Serializable;
 import java.util.Date;
 
 
-enum Status {
-    NA_CEKANJU,
-    ODOBREN,
-    ODBIJEN
-}
+
 @Entity
 public class ZahtevZaAktivacijuNalogaAutora implements Serializable {
+   public enum Status {
+        NA_CEKANJU,
+        ODOBREN,
+        ODBIJEN
+    }
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -33,6 +34,9 @@ public class ZahtevZaAktivacijuNalogaAutora implements Serializable {
 
     @OneToOne
     private Autor autor;
+
+    public ZahtevZaAktivacijuNalogaAutora() {
+    }
 
     public long getId() {
         return id;

@@ -1,5 +1,6 @@
 package com.example.webProj.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import java.io.Serializable;
 import java.util.HashSet;
@@ -16,9 +17,17 @@ public class Polica implements Serializable{
 
     @Column
     private boolean daLiJePrimarno;
-
+    @JsonIgnore
     @OneToMany
     private Set<StavkaPolice> stavkaPolice = new HashSet<>();
+
+    public Polica() {
+    }
+
+    public Polica(String naziv, boolean daLiJePrimarno) {
+        this.naziv = naziv;
+        this.daLiJePrimarno = daLiJePrimarno;
+    }
 
     public long getId() {
         return id;

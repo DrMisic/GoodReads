@@ -24,7 +24,7 @@ public class Knjiga implements Serializable {
     private double ISBN;
 
     @Column
-    private Date datum_objavljivanja;
+    private Date datumObjavljivanja;
 
     @Column
     private int broj_strana;
@@ -72,11 +72,11 @@ public class Knjiga implements Serializable {
     }
 
     public Date getDatum_objavljivanja() {
-        return datum_objavljivanja;
+        return datumObjavljivanja;
     }
 
     public void setDatum_objavljivanja(Date datum_objavljivanja) {
-        this.datum_objavljivanja = datum_objavljivanja;
+        this.datumObjavljivanja = datum_objavljivanja;
     }
 
     public int getBroj_strana() {

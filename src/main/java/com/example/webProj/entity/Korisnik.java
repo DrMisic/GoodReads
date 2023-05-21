@@ -1,20 +1,22 @@
 package com.example.webProj.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
+//TODO uloge popraviti u KorisnikDto
 
-enum Uloge {
-    KORISNIK,
-    AUTOR,
-    ADMINISTRATOR
-}
 @Entity
 @Inheritance (strategy = InheritanceType.SINGLE_TABLE)
 public class Korisnik implements Serializable {
 
+    public enum Uloge {
+        CITALAC,
+        AUTOR,
+        ADMINISTRATOR
+    }
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -25,7 +27,7 @@ public class Korisnik implements Serializable {
     private String prezime;
 
     @Column(unique = true)
-    private String korisnicko_ime;
+    private String korisnickoIme;
 
     @Column(unique = true)
     private String email;
@@ -43,9 +45,13 @@ public class Korisnik implements Serializable {
 
     @Column
     private Uloge uloga;
-
-    @OneToMany
+   //@JsonIgnore
+    @OneToMany(cascade = CascadeType.ALL)
     private Set<Polica> polica = new HashSet<>();
+
+
+    public Korisnik() {
+    }
 
     public Set<Polica> getPolica() {
         return polica;
@@ -76,11 +82,11 @@ public class Korisnik implements Serializable {
     }
 
     public String getKorisnicko_ime() {
-        return korisnicko_ime;
+        return korisnickoIme;
     }
 
     public void setKorisnicko_ime(String korisnicko_ime) {
-        this.korisnicko_ime = korisnicko_ime;
+        this.korisnickoIme = korisnicko_ime;
     }
 
     public String getEmail() {
