@@ -28,4 +28,6 @@ public class PolicaController {
         this.policaService.save(polica);
         return "Uspješno sačuvana polica";
     }
+
+
 }

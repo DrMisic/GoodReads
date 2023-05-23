@@ -1,21 +1,27 @@
 package com.example.webProj.controller;
 
+import com.example.webProj.dto.ZanrDto;
+import com.example.webProj.entity.Korisnik;
 import com.example.webProj.entity.Zanr;
+import com.example.webProj.service.KorisnikService;
 import com.example.webProj.service.ZanrService;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 public class ZanrController {
+
     private final ZanrService zanrService;
+    private final KorisnikService korisnikService;
     @Autowired
-    public ZanrController(ZanrService zanrService) {
+    public ZanrController(ZanrService zanrService,KorisnikService korisnikService) {
         this.zanrService = zanrService;
+        this.korisnikService= korisnikService;
     }
 
     @GetMapping(path = "/api/zanrovi")
@@ -24,9 +30,22 @@ public class ZanrController {
     public Zanr getZanr(@PathVariable("id")Long id){return zanrService.foundOne(id);}
     @GetMapping(path = "/api/zanr/{naslov}")
     public List<Zanr> getZanrByNaslov(@PathVariable("naslov") String naslov){return zanrService.findZanrByNaslov(naslov);}
-    @PostMapping(path = "/api/save-zanr")
-    public String saveZanr(Zanr zanr){
+    @PostMapping(path = "/api/add-new-zanr")
+    public ResponseEntity<String> addNewZanr(@RequestBody ZanrDto zanrDto, HttpSession session){
+        Korisnik loggedUser = (Korisnik) session.getAttribute("loggedUser");
+        if(loggedUser == null)
+        {
+            return new ResponseEntity<>("Nema sesije", HttpStatus.FORBIDDEN);
+        }
+        loggedUser = korisnikService.findOne(loggedUser.getId());
+
+        if(!(loggedUser.getUloga()== Korisnik.Uloge.ADMINISTRATOR))
+        {
+            return new ResponseEntity<>("Niste administrator", HttpStatus.FORBIDDEN);
+        }
+        Zanr zanr = new Zanr();
+        zanr.setNaslov(zanrDto.getNaslov());
         this.zanrService.save(zanr);
-        return "Uspješno sačuvan žanr";
+        return new ResponseEntity<>("Uspješno sačuvan žanr", HttpStatus.OK);
     }
 }

@@ -31,6 +31,13 @@ public class KorisnikController {
     @PostMapping(path = "/api/login")
     public ResponseEntity<String> login(@RequestBody LoginDto loginDto, HttpSession session)
     {
+        Korisnik korisnikTest =(Korisnik) session.getAttribute("loggedUser");
+        if(korisnikTest != null)
+        {
+            if(korisnikTest.getEmail().equals(loginDto.getEmail())) {
+                return new ResponseEntity("Vec si ulogovan.", HttpStatus.BAD_REQUEST);
+            }
+        }
         if(loginDto.getEmail().isEmpty() || loginDto.getPassword().isEmpty())
         {
             return new ResponseEntity("Email ili lozinka su prazni.", HttpStatus.BAD_REQUEST);
@@ -40,7 +47,12 @@ public class KorisnikController {
         {
             return new ResponseEntity("Korisnik ne postoji",HttpStatus.BAD_REQUEST);
         }
-        session.setAttribute("korisnik",korisnik);
+
+        if(!korisnik.getLozinka().equals(loginDto.getPassword()))
+        {
+            return new ResponseEntity("Pogrešna lozinka",HttpStatus.UNAUTHORIZED);
+        }
+        session.setAttribute("loggedUser",korisnik);
         return ResponseEntity.ok("Uspješno prijavljen");
     }
     @PostMapping(path="/api/register")
@@ -86,7 +98,7 @@ public class KorisnikController {
         police.add(primarnaPolicaRead);
         korisnik.setPolica(police);
 
-        session.setAttribute("korisnik",korisnik);
+        session.setAttribute("registeredUser",korisnik);
         //saveKorisnik(korisnik);
         this.korisnikService.save(korisnik);
         return ResponseEntity.ok("Uspješno registrovan");
@@ -101,5 +113,6 @@ public class KorisnikController {
     public Korisnik getKorisnikByEmail(@PathVariable("email") String email){return korisnikService.findKorisnikByEmail(email);}
     @GetMapping(path = "/api/korisnik/{uloga}")
     public List<Korisnik> getAllByUloga(@PathVariable("uloga")Korisnik.Uloge uloga){return korisnikService.findAllByUloga(uloga);}
+
 
 }

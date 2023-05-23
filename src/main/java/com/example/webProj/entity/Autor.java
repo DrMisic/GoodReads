@@ -17,6 +17,16 @@ public class Autor extends Korisnik implements Serializable{
     @OneToMany()
     private Set<Knjiga> spisakKnjiga = new HashSet<>();
 
+    public Autor() {
+    }
+
+    public Autor(boolean aktivan, Set<Knjiga> spisakKnjiga) {
+        this.aktivan = aktivan;
+        this.spisakKnjiga = spisakKnjiga;
+    }
+
+
+
     public boolean isAktivan() {
         return aktivan;
     }

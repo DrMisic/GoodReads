@@ -14,6 +14,9 @@ public class Zanr implements Serializable {
     @Column
     private String naslov;
 
+    public Zanr() {
+    }
+
     public long getId() {
         return id;
     }
