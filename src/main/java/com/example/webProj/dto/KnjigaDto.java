@@ -6,7 +6,7 @@ import  com.example.webProj.entity.Knjiga;
 import java.util.Date;
 
 public class KnjigaDto {
-    private Long id;
+
 
     private String naslov;
 
@@ -20,26 +20,25 @@ public class KnjigaDto {
 
     private String opis;
 
-    private Zanr zanr;
+   // private Zanr zanr;
 
     private float ocena;
 
     public KnjigaDto(){}
-    public KnjigaDto(Long id, String naslov, String naslovna_fotografija, double ISBN, Date datum_objavljivanja, int broj_strana, String opis, Zanr zanr, float ocena) {
-        this.id = id;
+    public KnjigaDto( String naslov, String naslovna_fotografija, double ISBN, Date datum_objavljivanja, int broj_strana, String opis,  float ocena) {
+
         this.naslov = naslov;
         this.naslovna_fotografija = naslovna_fotografija;
         this.ISBN = ISBN;
         this.datum_objavljivanja = datum_objavljivanja;
         this.broj_strana = broj_strana;
         this.opis = opis;
-        this.zanr = zanr;
+        //this.zanr = zanr;
         this.ocena = ocena;
     }
 
     public KnjigaDto(Knjiga knjiga)
     {
-        this.id = knjiga.getId();
         this.naslov = knjiga.getNaslov();
         this.naslovna_fotografija = knjiga.getNaslovna_fotografija();
         this.ISBN  = knjiga.getISBN();
@@ -47,16 +46,10 @@ public class KnjigaDto {
         this.broj_strana = knjiga.getBroj_strana();
         this.ocena = knjiga.getOcena();
         this.opis = knjiga.getOpis();
-        this.zanr = knjiga.getZanr();
+        //this.zanr = knjiga.getZanr();
     }
 
-    public Long getId() {
-        return id;
-    }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
 
     public String getNaslov() {
         return naslov;
@@ -105,7 +98,7 @@ public class KnjigaDto {
     public void setOpis(String opis) {
         this.opis = opis;
     }
-
+    /*
     public Zanr getZanr() {
         return zanr;
     }
@@ -113,7 +106,7 @@ public class KnjigaDto {
     public void setZanr(Zanr zanr) {
         this.zanr = zanr;
     }
-
+*/
     public float getOcena() {
         return ocena;
     }

@@ -26,6 +26,6 @@ public class StavkaPoliceService {
     }
 
     public List<StavkaPolice> findAll(){return stavkaPoliceRepository.findAll();}
-    public List<StavkaPolice> findStavkaPoliceByKnjiga(Knjiga knjiga){return stavkaPoliceRepository.getStavkaPoliceByKnjiga(knjiga);}
+    public StavkaPolice findStavkaPoliceByKnjiga(Knjiga knjiga){return stavkaPoliceRepository.getStavkaPoliceByKnjiga(knjiga);}
     public StavkaPolice  save(StavkaPolice stavkaPolice){return stavkaPoliceRepository.save(stavkaPolice);}
 }

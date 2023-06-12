@@ -43,8 +43,16 @@ public class ZanrController {
         {
             return new ResponseEntity<>("Niste administrator", HttpStatus.FORBIDDEN);
         }
+
         Zanr zanr = new Zanr();
         zanr.setNaslov(zanrDto.getNaslov());
+        for(Zanr z:zanrService.findAll())
+        {
+            if(zanr.getNaslov().equals(z.getNaslov()))
+            {
+                return new ResponseEntity<>("Već postoji žanr", HttpStatus.BAD_REQUEST);
+            }
+        }
         this.zanrService.save(zanr);
         return new ResponseEntity<>("Uspješno sačuvan žanr", HttpStatus.OK);
     }

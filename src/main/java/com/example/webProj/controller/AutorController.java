@@ -1,7 +1,11 @@
 package com.example.webProj.controller;
 
 import com.example.webProj.dto.ApplyForAutorDto;
+import com.example.webProj.dto.AutorDto;
+import com.example.webProj.dto.KnjigaDto;
+import com.example.webProj.dto.KorisnikDto;
 import com.example.webProj.entity.Autor;
+import com.example.webProj.entity.Knjiga;
 import com.example.webProj.entity.Korisnik;
 import com.example.webProj.entity.Polica;
 import com.example.webProj.service.AutorService;
@@ -11,6 +15,7 @@ import java.util.List;
 import java.util.Set;
 
 import com.example.webProj.service.EmailSenderService;
+import com.example.webProj.service.KnjigaService;
 import com.example.webProj.service.KorisnikService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,12 +33,14 @@ public class AutorController {
     private EmailSenderService senderService;
     private final AutorService autorService;
     private final KorisnikService korisnikService;
+    private final KnjigaService knjigaService;
 
     @Autowired
-    public AutorController(AutorService autorService, KorisnikService korisnikService,EmailSenderService senderService) {
+    public AutorController(AutorService autorService, KorisnikService korisnikService,EmailSenderService senderService,KnjigaService knjigaService) {
         this.autorService = autorService;
         this.korisnikService = korisnikService;
         this.senderService = senderService;
+        this.knjigaService = knjigaService;
     }
 
     @GetMapping(path = "/api/autori")
@@ -134,6 +141,7 @@ public class AutorController {
         police.add(primarnaPolicaCurrentlyReading);
         police.add(primarnaPolicaRead);
         autor.setPolica(police);
+        autor.setUloga(Korisnik.Uloge.AUTOR);
         autor.setAktivan(true);
         String subject = new String("Aktivacija naloga [GoodReads]");
         String text =new String ("Poštovani "+autor.getEmail()+" vaša lozinka je: "+ autor.getLozinka()+"\n Molimo vas da promjenite lozinku.");
@@ -164,6 +172,93 @@ public class AutorController {
         String text = new String("Zahtjev je odbijen!");
         senderService.sendEmail(applyForAutorDto.getEmail(), subject,text);
         return new ResponseEntity<>("Odbijen je autor",HttpStatus.OK);
+    }
+
+    @PostMapping(path = "/api/add-knjiga/")
+    public ResponseEntity<String> addKnjiga(@RequestBody KnjigaDto knjigaDto, HttpSession session)
+    {
+        Korisnik loggedUser = (Korisnik) session.getAttribute("loggedUser");
+        if(loggedUser.getUloga() == Korisnik.Uloge.AUTOR || loggedUser.getUloga() == Korisnik.Uloge.ADMINISTRATOR)
+        {
+            Autor a = autorService.findOne(loggedUser.getId());
+            if(a == null)
+            {
+                return new ResponseEntity("Ne postoji autor", HttpStatus.UNAUTHORIZED);
+            }
+            Set<Knjiga> knjige = a.getSpisakKnjiga();
+            Knjiga k = new Knjiga(knjigaDto.getNaslov(),knjigaDto.getNaslovna_fotografija(),knjigaDto.getISBN(),knjigaDto.getDatum_objavljivanja(),knjigaDto.getBroj_strana(),knjigaDto.getOpis(),knjigaDto.getOcena());
+            knjige.add(k);
+            a.setSpisakKnjiga(knjige);
+            this.knjigaService.save(k);
+            return ResponseEntity.ok("Uspješno dodata knjiga");
+        }
+
+        return new ResponseEntity("Nemate ta ovlašćenja", HttpStatus.UNAUTHORIZED);
+
+    }
+
+    @PutMapping(path = "/api/update-knjiga/knjiga_id/{id}")
+    public ResponseEntity<String> updateKnjiga(@RequestBody KnjigaDto knjigaDto,@PathVariable("id") Long id, HttpSession session)
+    {
+        Korisnik loggedUser = (Korisnik) session.getAttribute("loggedUser");
+        if(loggedUser.getUloga() == Korisnik.Uloge.AUTOR || loggedUser.getUloga() == Korisnik.Uloge.ADMINISTRATOR)
+        {
+            Autor a = autorService.findOne(loggedUser.getId());
+            if(a == null)
+            {
+                return new ResponseEntity("Ne postoji autor", HttpStatus.UNAUTHORIZED);
+            }
+
+
+            Set<Knjiga> knjige = a.getSpisakKnjiga();
+            for(Knjiga knj: knjige)
+            {
+                if(knj.getId() == id)
+                {
+                    knjige.remove(knj);
+                    knj.setNaslov(knjigaDto.getNaslov());
+                    knj.setISBN(knjigaDto.getISBN());
+                    knj.setBroj_strana(knjigaDto.getBroj_strana());
+                    knj.setOpis(knjigaDto.getOpis());
+                    knj.setOcena(knjigaDto.getOcena());
+                    knj.setDatum_objavljivanja(knjigaDto.getDatum_objavljivanja());
+                    knj.setNaslovna_fotografija(knjigaDto.getNaslovna_fotografija());
+                    knjige.add(knj);
+                    a.setSpisakKnjiga(knjige);
+                    return ResponseEntity.ok("Uspješno ažurirana knjiga");
+                }
+            }
+
+
+            return new ResponseEntity("Ne postoji knjiga", HttpStatus.BAD_REQUEST);
+        }
+
+        return new ResponseEntity("Nemate ta ovlašćenja", HttpStatus.UNAUTHORIZED);
+
+    }
+    @PutMapping(path = "/api/update-autor")
+    public ResponseEntity<String> update(@RequestBody AutorDto autorDto, HttpSession session)
+    {
+        Korisnik korisnikTest =(Korisnik) session.getAttribute("loggedUser");
+        if(korisnikTest == null)
+        {
+            return new ResponseEntity("Nisi ulogovan.", HttpStatus.BAD_REQUEST);
+
+        }
+        Autor a = autorService.findOne(korisnikTest.getId());
+        if(a == null)
+        {
+            return new ResponseEntity("Nije nalog autora.", HttpStatus.BAD_REQUEST);
+        }
+        a.setIme(autorDto.getIme());
+        a.setPrezime(autorDto.getPrezime());
+        a.setLozinka(autorDto.getLozinka());
+        a.setEmail(autorDto.getEmail());
+        a.setKorisnicko_ime(autorDto.getKorisnicko_ime());
+        a.setOpis(autorDto.getOpis());
+        a.setDatum_rodjenja(autorDto.getDatum_rodjenja());
+        a.setProfilna_slika(autorDto.getProfilna_slika());
+        return new ResponseEntity("Uspješno ažuriran.", HttpStatus.OK);
     }
 
 }

@@ -35,11 +35,11 @@ public class KorisnikDto {
     private Korisnik.Uloge uloga;
 
 
-    private Set<Polica> polica = new HashSet<>();
+    //private Set<Polica> polica = new HashSet<>();
 
     public KorisnikDto(){}
 
-    public KorisnikDto(Long id, String ime, String prezime, String korisnicko_ime, String email, String lozinka, Date datum_rodjenja, String profilna_slika,Korisnik.Uloge uloga, String opis, Set<Polica> polica) {
+    public KorisnikDto(Long id, String ime, String prezime, String korisnicko_ime, String email, String lozinka, Date datum_rodjenja, String profilna_slika,Korisnik.Uloge uloga, String opis) {
         this.id = id;
         this.ime = ime;
         this.prezime = prezime;
@@ -50,7 +50,7 @@ public class KorisnikDto {
         this.profilna_slika = profilna_slika;
         this.opis = opis;
         this.uloga = uloga;
-        this.polica = polica;
+        //this.polica = polica;
     }
 
     public KorisnikDto(Korisnik korisnik)
@@ -65,7 +65,7 @@ public class KorisnikDto {
         this.profilna_slika = korisnik.getProfilna_slika();
         this.opis = korisnik.getOpis();
         this.uloga = korisnik.getUloga();
-        this.polica = korisnik.getPolica();
+        //this.polica = korisnik.getPolica();
     }
 
     public Long getId() {
@@ -147,7 +147,7 @@ public class KorisnikDto {
     public void setOpis(String opis) {
         this.opis = opis;
     }
-
+    /*
     public Set<Polica> getPolica() {
         return polica;
     }
@@ -155,4 +155,6 @@ public class KorisnikDto {
     public void setPolica(Set<Polica> polica) {
         this.polica = polica;
     }
+
+     */
 }

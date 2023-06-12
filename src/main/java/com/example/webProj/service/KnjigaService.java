@@ -27,7 +27,7 @@ public class KnjigaService {
         return null;
     }
 
-    public List<Knjiga> findAllByNaslov(String naslov){return knjigaRepository.findAllByNaslov(naslov);}
+    public Knjiga findOneByNaslov(String naslov){return knjigaRepository.findOneByNaslov(naslov);}
     public List<Knjiga> findAllByISBN(double ISBN){return knjigaRepository.findAllByISBN(ISBN);}
     public List<Knjiga> findAllByDatumObjavljivanja (Date datum){return  knjigaRepository.findAllByDatumObjavljivanja(datum);}
     public List<Knjiga> findAllByZanr (Zanr zanr){return knjigaRepository.findAllByZanr(zanr);}

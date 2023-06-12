@@ -46,7 +46,7 @@ public class Korisnik implements Serializable {
     @Column
     private Uloge uloga;
    //@JsonIgnore
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<Polica> polica = new HashSet<>();
 
 

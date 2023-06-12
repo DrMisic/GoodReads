@@ -7,7 +7,7 @@ import com.example.webProj.entity.Recenzija;
 import java.util.Date;
 
 public class RecenzijaDto {
-    private Long id;
+
 
     private float ocena;
 
@@ -15,37 +15,30 @@ public class RecenzijaDto {
     private String tekst;
 
 
-    private Date datum_recenzije;
 
 
-    private Korisnik korisnik;
+
+
 
     public RecenzijaDto(){}
 
-    public RecenzijaDto(Long id, float ocena, String tekst, Date datum_recenzije, Korisnik korisnik) {
-        this.id = id;
+    public RecenzijaDto( float ocena, String tekst,  Korisnik korisnik) {
+
         this.ocena = ocena;
         this.tekst = tekst;
-        this.datum_recenzije = datum_recenzije;
-        this.korisnik = korisnik;
+
+
     }
 
     public RecenzijaDto(Recenzija recenzija)
     {
-        this.id = recenzija.getId();
+
         this.ocena = recenzija.getOcena();
         this.tekst = recenzija.getTekst();
-        this.datum_recenzije = recenzija.getDatum_recenzije();
-        this.korisnik = recenzija.getKorisnik();
+
+
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
 
     public float getOcena() {
         return ocena;
@@ -63,19 +56,9 @@ public class RecenzijaDto {
         this.tekst = tekst;
     }
 
-    public Date getDatum_recenzije() {
-        return datum_recenzije;
-    }
 
-    public void setDatum_recenzije(Date datum_recenzije) {
-        this.datum_recenzije = datum_recenzije;
-    }
 
-    public Korisnik getKorisnik() {
-        return korisnik;
-    }
 
-    public void setKorisnik(Korisnik korisnik) {
-        this.korisnik = korisnik;
-    }
+
+
 }

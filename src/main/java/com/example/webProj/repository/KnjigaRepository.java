@@ -10,7 +10,7 @@ import java.util.List;
 
 @Repository
 public interface KnjigaRepository extends JpaRepository<Knjiga,Long> {
-    List<Knjiga> findAllByNaslov (String naslov);
+    Knjiga findOneByNaslov (String naslov);
 
     List<Knjiga> findAllByISBN (double ISBN);
 

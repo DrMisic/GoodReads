@@ -1,14 +1,21 @@
 package com.example.webProj.controller;
 
+import com.example.webProj.dto.KnjigaDto;
+import com.example.webProj.entity.Autor;
 import com.example.webProj.entity.Knjiga;
+import com.example.webProj.entity.Korisnik;
 import com.example.webProj.entity.Zanr;
 import com.example.webProj.service.KnjigaService;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 @RestController
 public class KnjigaController {
@@ -22,15 +29,15 @@ public class KnjigaController {
     public List<Knjiga> getKnjige() {
         return knjigaService.findAll();
     }
-    @GetMapping(path = "/api/knjiga/{id}")
+    @GetMapping(path = "/api/knjiga/id/{id}")
     public Knjiga getKnjiga(@PathVariable(name = "id") Long id) {
         return knjigaService.findOne(id);
     }
-    @GetMapping(path = "/api/knjiga/{naslov}")
-    public List<Knjiga> getAllByNaslov(@PathVariable("naslov") String naslov) {
-        return knjigaService.findAllByNaslov(naslov);
+    @GetMapping(path = "/api/knjiga/naslov/{naslov}")
+    public Knjiga getOneByNaslov(@PathVariable("naslov") String naslov) {
+        return knjigaService.findOneByNaslov(naslov);
     }
-    @GetMapping(path = "/api/knjiga/{ISBN}")
+    @GetMapping(path = "/api/knjiga/isbn/{ISBN}")
     public List<Knjiga> getAllByISBN(@PathVariable("ISBN") double ISBN) {
         return knjigaService.findAllByISBN(ISBN);
     }
@@ -38,7 +45,7 @@ public class KnjigaController {
     public List<Knjiga> getAllByDatumObjavljivanja(@PathVariable("datumObjavljivanja") Date datumObjavljivanja) {
         return knjigaService.findAllByDatumObjavljivanja(datumObjavljivanja);
     }
-    @GetMapping(path = "/api/knjiga/{zanr}")
+    @GetMapping(path = "/api/knjiga/zanr/{zanr}")
     public List<Knjiga> getAllByZanr(@PathVariable("zanr") Zanr zanr) {
         return knjigaService.findAllByZanr(zanr);
     }
@@ -46,12 +53,7 @@ public class KnjigaController {
     public List<Knjiga> getAllByOcena(@PathVariable("ocena") double ocena) {
         return knjigaService.findAllByOcena(ocena);
     }
-    @PostMapping(path="/api/save-knjiga")
-    public String saveKnjiga(@RequestBody Knjiga knjiga)
-    {
-        this.knjigaService.save(knjiga);
-        return "Uspješno sačuvana knjiga";
-    }
+
 
 
 

@@ -9,18 +9,18 @@ import java.util.Set;
 public class AutorDto extends KorisnikDto {
 
     private boolean aktivan;
-    private Set<Knjiga> spisakKnjiga = new HashSet<>();
+    //private Set<Knjiga> spisakKnjiga = new HashSet<>();
 
     public AutorDto(){}
-    public AutorDto(boolean aktivan, Set<Knjiga> spisakKnjiga) {
+    public AutorDto(boolean aktivan ) {
         this.aktivan = aktivan;
-        this.spisakKnjiga = spisakKnjiga;
+        //this.spisakKnjiga = spisakKnjiga;
     }
 
     public AutorDto(Autor autor)
     {
         this.aktivan = autor.isAktivan();
-        this.spisakKnjiga = autor.getSpisakKnjiga();
+        //this.spisakKnjiga = autor.getSpisakKnjiga();
     }
 
 
@@ -32,7 +32,7 @@ public class AutorDto extends KorisnikDto {
     public void setAktivan(boolean aktivan) {
         this.aktivan = aktivan;
     }
-
+    /*
     public Set<Knjiga> getSpisakKnjiga() {
         return spisakKnjiga;
     }
@@ -40,4 +40,6 @@ public class AutorDto extends KorisnikDto {
     public void setSpisakKnjiga(Set<Knjiga> spisakKnjiga) {
         this.spisakKnjiga = spisakKnjiga;
     }
+
+     */
 }

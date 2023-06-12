@@ -3,9 +3,11 @@ package com.example.webProj.controller;
 import com.example.webProj.dto.KorisnikDto;
 import com.example.webProj.dto.LoginDto;
 import com.example.webProj.dto.SignUpDto;
+import com.example.webProj.entity.Autor;
 import com.example.webProj.entity.Korisnik;
 import com.example.webProj.entity.Polica;
 import com.example.webProj.service.KorisnikService;
+import com.example.webProj.service.PolicaService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,9 +21,11 @@ import java.util.Set;
 @RestController
 public class KorisnikController {
     private final KorisnikService korisnikService;
+    private final PolicaService policaService;
     @Autowired
-    public KorisnikController(KorisnikService korisnikService) {
+    public KorisnikController(KorisnikService korisnikService, PolicaService policaService) {
         this.korisnikService = korisnikService;
+        this.policaService = policaService;
     }
     @PostMapping(path="/api/save-korisnik")
     public String saveKorisnik(Korisnik korisnik){
@@ -55,6 +59,19 @@ public class KorisnikController {
         session.setAttribute("loggedUser",korisnik);
         return ResponseEntity.ok("Uspješno prijavljen");
     }
+
+    @PostMapping("api/logout")
+    public ResponseEntity Logout(HttpSession session){
+        Korisnik loggedKorisnik = (Korisnik) session.getAttribute("loggedUser");
+
+        if (loggedKorisnik == null)
+            return new ResponseEntity("Niste ni prijavljeni", HttpStatus.FORBIDDEN);
+
+        session.invalidate();
+        return new ResponseEntity("Uspješno izlogovan", HttpStatus.OK);
+    }
+
+
     @PostMapping(path="/api/register")
     public ResponseEntity<String> register(@RequestBody SignUpDto signUpDto,HttpSession session)
     {
@@ -105,14 +122,50 @@ public class KorisnikController {
     }
     @GetMapping(path = "/api/korisnici")
     public List<Korisnik> getKorisnici() {return korisnikService.findAll();}
-    @GetMapping(path = "/api/korisnik/{id}")
+    @GetMapping(path = "/api/korisnik/id/{id}")
     public Korisnik getKorisnikById(@PathVariable(name = "id") Long id){return korisnikService.findOne(id);}
-    @GetMapping(path = "/api/korisnik/{korisnickoIme}")
+    @GetMapping(path = "/api/korisnik/polica/{id}")
+    public Polica getKorisnikovaPolicaById(@PathVariable(name = "id")Long id,HttpSession session)
+    {
+
+        Korisnik k = (Korisnik) session.getAttribute("loggedUser");
+        if(k == null)
+        {
+            return null;
+        }
+        for(Polica p : k.getPolica())
+        {
+            if(p.getId() == id)
+            {
+                return p;
+            }
+        }
+        return null;
+    }
+    @GetMapping(path = "/api/korisnik/korisnickoIme/{korisnickoIme}")
     public Korisnik getKorisnikByKorisnickoIme(@PathVariable("korisnickoIme") String korisnickoIme){return korisnikService.findKorisnikByKorisnickoIme(korisnickoIme);}
     @GetMapping(path = "/api/korisnik/{email}")
     public Korisnik getKorisnikByEmail(@PathVariable("email") String email){return korisnikService.findKorisnikByEmail(email);}
     @GetMapping(path = "/api/korisnik/{uloga}")
     public List<Korisnik> getAllByUloga(@PathVariable("uloga")Korisnik.Uloge uloga){return korisnikService.findAllByUloga(uloga);}
+    @PutMapping(path = "/api/update-korisnik")
+    public ResponseEntity<String> update(@RequestBody KorisnikDto korisnikDto,HttpSession session)
+    {
+        Korisnik korisnikTest =(Korisnik) session.getAttribute("loggedUser");
+        if(korisnikTest == null)
+        {
+                return new ResponseEntity("Nisi ulogovan.", HttpStatus.BAD_REQUEST);
 
+        }
+        korisnikTest.setIme(korisnikDto.getIme());
+        korisnikTest.setPrezime(korisnikDto.getPrezime());
+        korisnikTest.setLozinka(korisnikDto.getLozinka());
+        korisnikTest.setEmail(korisnikDto.getEmail());
+        korisnikTest.setKorisnicko_ime(korisnikDto.getKorisnicko_ime());
+        korisnikTest.setOpis(korisnikDto.getOpis());
+        korisnikTest.setDatum_rodjenja(korisnikDto.getDatum_rodjenja());
+        korisnikTest.setProfilna_slika(korisnikDto.getProfilna_slika());
+        return new ResponseEntity("Uspješno ažuriran.", HttpStatus.OK);
+    }
 
 }

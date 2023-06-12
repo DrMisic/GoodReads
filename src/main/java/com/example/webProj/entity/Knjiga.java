@@ -38,6 +38,20 @@ public class Knjiga implements Serializable {
     @Column
     private float ocena;
 
+    public Knjiga()
+    {
+
+    }
+    public Knjiga(String naslov, String naslovna_fotografija, double ISBN, Date datumObjavljivanja, int broj_strana, String opis, float ocena) {
+        this.naslov = naslov;
+        this.naslovna_fotografija = naslovna_fotografija;
+        this.ISBN = ISBN;
+        this.datumObjavljivanja = datumObjavljivanja;
+        this.broj_strana = broj_strana;
+        this.opis = opis;
+        //this.zanr = zanr;
+        this.ocena = ocena;
+    }
 
     public long getId() {
         return id;

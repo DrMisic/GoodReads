@@ -9,5 +9,5 @@ import java.util.List;
 @Repository
 public interface StavkaPoliceRepository  extends JpaRepository<StavkaPolice,Long>{
 
-    List<StavkaPolice>  getStavkaPoliceByKnjiga(Knjiga knjiga);
+    StavkaPolice  getStavkaPoliceByKnjiga(Knjiga knjiga);
 }

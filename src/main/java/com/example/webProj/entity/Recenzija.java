@@ -23,6 +23,8 @@ public class Recenzija implements Serializable {
     @OneToOne
     private Korisnik korisnik;
 
+
+
     public long getId() {
         return id;
     }
