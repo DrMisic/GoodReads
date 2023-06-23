@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
-
+@CrossOrigin
 @RestController
 public class KnjigaController {
     private final KnjigaService knjigaService;

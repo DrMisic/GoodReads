@@ -17,8 +17,8 @@ public class Polica implements Serializable{
 
     @Column
     private boolean daLiJePrimarno;
-    @JsonIgnore
-    @OneToMany
+    //@JsonIgnore
+    @OneToMany(fetch = FetchType.EAGER)
     private Set<StavkaPolice> stavkaPolice = new HashSet<>();
 
     public Polica() {

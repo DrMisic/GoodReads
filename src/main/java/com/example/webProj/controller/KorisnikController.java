@@ -1,11 +1,13 @@
 package com.example.webProj.controller;
 
+import com.example.webProj.dto.AutorDto;
 import com.example.webProj.dto.KorisnikDto;
 import com.example.webProj.dto.LoginDto;
 import com.example.webProj.dto.SignUpDto;
 import com.example.webProj.entity.Autor;
 import com.example.webProj.entity.Korisnik;
 import com.example.webProj.entity.Polica;
+import com.example.webProj.service.AutorService;
 import com.example.webProj.service.KorisnikService;
 import com.example.webProj.service.PolicaService;
 import jakarta.servlet.http.HttpSession;
@@ -17,15 +19,18 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
+@CrossOrigin
 @RestController
 public class KorisnikController {
     private final KorisnikService korisnikService;
     private final PolicaService policaService;
+
+    private final AutorService autorService;
     @Autowired
-    public KorisnikController(KorisnikService korisnikService, PolicaService policaService) {
+    public KorisnikController(KorisnikService korisnikService, PolicaService policaService,AutorService autorService) {
         this.korisnikService = korisnikService;
         this.policaService = policaService;
+        this.autorService = autorService;
     }
     @PostMapping(path="/api/save-korisnik")
     public String saveKorisnik(Korisnik korisnik){
@@ -33,31 +38,69 @@ public class KorisnikController {
         return "Korisnik uspješno sačuvan";
     }
     @PostMapping(path = "/api/login")
-    public ResponseEntity<String> login(@RequestBody LoginDto loginDto, HttpSession session)
+    public ResponseEntity<KorisnikDto> login(@RequestBody LoginDto loginDto, HttpSession session)
     {
+        /*
         Korisnik korisnikTest =(Korisnik) session.getAttribute("loggedUser");
         if(korisnikTest != null)
         {
             if(korisnikTest.getEmail().equals(loginDto.getEmail())) {
-                return new ResponseEntity("Vec si ulogovan.", HttpStatus.BAD_REQUEST);
+                return ResponseEntity.badRequest().body(null);
             }
         }
         if(loginDto.getEmail().isEmpty() || loginDto.getPassword().isEmpty())
         {
-            return new ResponseEntity("Email ili lozinka su prazni.", HttpStatus.BAD_REQUEST);
+            return ResponseEntity.badRequest().body(null);
         }
         Korisnik korisnik = korisnikService.findKorisnikByEmail(loginDto.getEmail());
         if(korisnik == null)
         {
-            return new ResponseEntity("Korisnik ne postoji",HttpStatus.BAD_REQUEST);
+            return ResponseEntity.badRequest().body(null);
         }
 
         if(!korisnik.getLozinka().equals(loginDto.getPassword()))
         {
-            return new ResponseEntity("Pogrešna lozinka",HttpStatus.UNAUTHORIZED);
+            return ResponseEntity.badRequest().body(null);
         }
+        KorisnikDto korisnikDto = new KorisnikDto(korisnikTest.getIme(),korisnikTest.getPrezime(),korisnikTest.getKorisnicko_ime(),korisnikTest.getEmail(),korisnikTest.getLozinka(),korisnikTest.getDatum_rodjenja(),korisnikTest.getProfilna_slika(),korisnikTest.getUloga(),korisnikTest.getOpis());
         session.setAttribute("loggedUser",korisnik);
-        return ResponseEntity.ok("Uspješno prijavljen");
+        return ResponseEntity.ok(korisnikDto );
+
+         */
+
+        if (loginDto.getEmail().isEmpty() || loginDto.getPassword().isEmpty()) {
+            return ResponseEntity.badRequest().body(null);
+        }
+
+        String mail = loginDto.getEmail();
+
+        List<Autor> autori =  autorService.findAll();
+        for(Autor dto : autori){
+            if(dto.getEmail().equals(mail)) {
+                if (dto.isAktivan()== false) {
+                    return ResponseEntity.badRequest().body(null);
+                }
+            }
+        }
+
+        Korisnik loggedKorisnik = korisnikService.login(loginDto.getEmail(), loginDto.getPassword(), session);
+        if (loggedKorisnik == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        KorisnikDto korisnikDto = new KorisnikDto();
+
+        korisnikDto.setIme(loggedKorisnik.getIme());
+        korisnikDto.setPrezime(loggedKorisnik.getPrezime());
+        korisnikDto.setKorisnicko_ime(loggedKorisnik.getKorisnicko_ime());
+        korisnikDto.setDatum_rodjenja(loggedKorisnik.getDatum_rodjenja());
+        korisnikDto.setProfilna_slika(loggedKorisnik.getProfilna_slika());
+        korisnikDto.setOpis(loggedKorisnik.getOpis());
+        korisnikDto.setUloga(loggedKorisnik.getUloga());
+        //korisnikDto.setPolice(loggedKorisnik.getPolice());
+
+        //session.setAttribute("employee", loggedKorisnik);
+        return ResponseEntity.ok(korisnikDto);
     }
 
     @PostMapping("api/logout")
@@ -157,15 +200,21 @@ public class KorisnikController {
                 return new ResponseEntity("Nisi ulogovan.", HttpStatus.BAD_REQUEST);
 
         }
-        korisnikTest.setIme(korisnikDto.getIme());
-        korisnikTest.setPrezime(korisnikDto.getPrezime());
-        korisnikTest.setLozinka(korisnikDto.getLozinka());
-        korisnikTest.setEmail(korisnikDto.getEmail());
-        korisnikTest.setKorisnicko_ime(korisnikDto.getKorisnicko_ime());
-        korisnikTest.setOpis(korisnikDto.getOpis());
-        korisnikTest.setDatum_rodjenja(korisnikDto.getDatum_rodjenja());
-        korisnikTest.setProfilna_slika(korisnikDto.getProfilna_slika());
+        korisnikService.updateUser(korisnikTest.getId(),korisnikDto);
         return new ResponseEntity("Uspješno ažuriran.", HttpStatus.OK);
+    }
+
+    @GetMapping(path = "/api/my-police")
+    public Set<Polica> mojePolice(HttpSession session)
+    {
+        Korisnik korisnik = (Korisnik)  session.getAttribute("loggedUser");
+        if(korisnik == null)
+        {
+            return null;
+
+        }
+        Set<Polica> police = korisnik.getPolica();
+        return police;
     }
 
 }

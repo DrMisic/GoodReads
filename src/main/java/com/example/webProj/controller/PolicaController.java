@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Set;
-
+@CrossOrigin
 @RestController
 public class PolicaController {
     private final PolicaService policaService;

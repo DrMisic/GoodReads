@@ -39,8 +39,8 @@ public class KorisnikDto {
 
     public KorisnikDto(){}
 
-    public KorisnikDto(Long id, String ime, String prezime, String korisnicko_ime, String email, String lozinka, Date datum_rodjenja, String profilna_slika,Korisnik.Uloge uloga, String opis) {
-        this.id = id;
+    public KorisnikDto( String ime, String prezime, String korisnicko_ime, String email, String lozinka, Date datum_rodjenja, String profilna_slika,Korisnik.Uloge uloga, String opis) {
+        //this.id = id;
         this.ime = ime;
         this.prezime = prezime;
         this.korisnicko_ime = korisnicko_ime;
@@ -55,7 +55,7 @@ public class KorisnikDto {
 
     public KorisnikDto(Korisnik korisnik)
     {
-        this.id = korisnik.getId();
+        //this.id = korisnik.getId();
         this.ime = korisnik.getIme();
         this.prezime = korisnik.getPrezime();
         this.korisnicko_ime = korisnik.getKorisnicko_ime();
@@ -68,13 +68,6 @@ public class KorisnikDto {
         //this.polica = korisnik.getPolica();
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
 
     public String getIme() {
         return ime;

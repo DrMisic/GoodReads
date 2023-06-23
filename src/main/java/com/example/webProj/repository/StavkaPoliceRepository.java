@@ -10,4 +10,5 @@ import java.util.List;
 public interface StavkaPoliceRepository  extends JpaRepository<StavkaPolice,Long>{
 
     StavkaPolice  getStavkaPoliceByKnjiga(Knjiga knjiga);
+    void deleteById(Long id);
 }

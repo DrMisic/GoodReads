@@ -14,7 +14,7 @@ import java.time.format.DateTimeFormatter;
 
 import java.util.Date;
 import java.util.List;
-
+@CrossOrigin
 @RestController
 public class ZahtevZaAktivacijuNalogaAutoraController {
     public final ZahtevZaAktivacijuNalogaAutoraService zahtevZaAktivacijuNalogaAutoraService;

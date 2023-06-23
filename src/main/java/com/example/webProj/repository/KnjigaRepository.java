@@ -19,6 +19,8 @@ public interface KnjigaRepository extends JpaRepository<Knjiga,Long> {
 
     List<Knjiga> findAllByOcena (double ocena);
 
+    void deleteById(Long id);
+
 
 
 }
