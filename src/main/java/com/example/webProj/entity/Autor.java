@@ -14,7 +14,7 @@ public class Autor extends Korisnik implements Serializable{
     @Column
     private boolean aktivan;
 
-    @OneToMany()
+    @OneToMany
     private Set<Knjiga> spisakKnjiga = new HashSet<>();
 
     public Autor() {

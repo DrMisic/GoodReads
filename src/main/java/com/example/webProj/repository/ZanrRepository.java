@@ -9,5 +9,6 @@ import java.util.List;
 @Repository
 public interface ZanrRepository extends JpaRepository<Zanr,Long> {
 
+    Zanr getZanrById(Long id);
     List<Zanr> getZanrByNaslov(String naslov);
 }

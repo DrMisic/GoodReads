@@ -22,28 +22,119 @@
         <div>
           <ul class="menu">
             <li id="pocetna"><a href="/homeCitalac">Početna</a></li>
-            <li id="pretraga"><a href="/pretragaCitalac">Pretraga 🔍</a></li>
+            <li id="pretraga"><a href="/pretragaCitalac">Pretraga </a></li>
             <li><Logout/></li>
           </ul>
         </div>
       </div>
     </div>
+    <div class="container3">
+      <div>
+        <h3 style="text-align: center; padding-top: 20px; padding-bottom: 10px; font-weight: bold;">
+          Police
+        </h3>
+        <div class="zahtevi-table">
+          <table class="center">
+            <thead>
+            <tr>
+              <th> Naziv </th>
+              <th> Primarna </th>
+              <th> Pogledaj stavke police </th>
+              <th> Obrisi policu </th>
+
+            </tr>
+            </thead>
+            <tbody>
+            <tr v-for="polica in police  " :key="polica.id">
+              <td>{{ polica.naziv }}</td>
+              <td>{{ polica.daLiJePrimarno }}</td>
+              <td>
+                <button @click="stavkePolice(polica.id)">Pogledaj stavke police</button>
+              </td>
+              <td>
+                <button @click="obrisiPolicu(polica.id)">Obrisi policu</button>
+              </td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="container4" style="padding-top: 40px">
+      <h4 style="text-align: center; padding-top: 20px; padding-bottom: 10px; font-weight:bold;">
+        Dodaj policu</h4>
+
+        <input type="text" v-model="policaNaziv" placeholder="Unesite naziv police">
+        <button @click="addPolica">Dodaj policu</button>
+
+    </div>
   </header>
 
   <footer>
-    <p>&copy; 2023 BookBuddy. Sva prava zadržana.</p>
+    <p>&copy; 2023 GoodReads. Sva prava zadržana.</p>
   </footer>
 </template>
 
 <script>
 import Logout from '@/components/Logout.vue';
+import axios from "axios";
 
 export default {
   name: 'HomeCitalacView',
   components: {
     Logout
   },
+  data(){
+    return {
+      police: [],
+      stavkePolice:[],
+    };
+  },
+  mounted() {
+    this.getPolice();
+    this.getStavkaPolice();
+  },
+  methods:{
+    getPolice()
+    {
+      axios
+          .get("http://localhost:9090/api/my-police", { withCredentials: true })
+          .then((response) => {
+            this.police = response.data;
+
+          })
+          .catch((error) => {
+            console.log(error);
+            alert("Failed to fetch police");
+          });
+    },
+    addPolica(){
+          const p = {
+            naziv:  this.policaNaziv,
+          };
+          axios
+            .post("http://localhost:9090/api/save-polica", p ,{ withCredentials: true })
+            .then((response) => {
+              this.getPolice();
+              this.naziv = "";
+
+            })
+            .catch((error) => {
+              console.log(error);
+              alert("Failed to fetch police");
+            });
+    },
+    getStavkaPolice()
+    {
+
+    }
+
+  }
+
+
+
 };
+
 </script>
 
 <style>
@@ -136,7 +227,7 @@ h2 {
   font-weight: bold;
   font-style: 8px;
   font-size: 15px;
-  color: rgb(36, 136, 102);
+  color: rgb(96, 108, 93);
 }
 
 .row4 input {
@@ -216,7 +307,7 @@ h2 {
 }
 
 .row14 button{
-  background-color:aquamarine;
+  background-color:rgb(96, 108, 93);
   border: none;
   color: white;
   padding: 16px 32px;

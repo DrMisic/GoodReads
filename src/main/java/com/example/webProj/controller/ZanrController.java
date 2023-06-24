@@ -33,6 +33,7 @@ public class ZanrController {
     @PostMapping(path = "/api/add-new-zanr")
     public ResponseEntity<String> addNewZanr(@RequestBody ZanrDto zanrDto, HttpSession session){
         Korisnik loggedUser = (Korisnik) session.getAttribute("loggedUser");
+        loggedUser = korisnikService.findOne(loggedUser.getId());
         if(loggedUser == null)
         {
             return new ResponseEntity<>("Nema sesije", HttpStatus.FORBIDDEN);

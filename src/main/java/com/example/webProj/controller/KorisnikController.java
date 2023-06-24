@@ -1,13 +1,12 @@
 package com.example.webProj.controller;
 
-import com.example.webProj.dto.AutorDto;
-import com.example.webProj.dto.KorisnikDto;
-import com.example.webProj.dto.LoginDto;
-import com.example.webProj.dto.SignUpDto;
+import com.example.webProj.dto.*;
 import com.example.webProj.entity.Autor;
+import com.example.webProj.entity.Knjiga;
 import com.example.webProj.entity.Korisnik;
 import com.example.webProj.entity.Polica;
 import com.example.webProj.service.AutorService;
+import com.example.webProj.service.KnjigaService;
 import com.example.webProj.service.KorisnikService;
 import com.example.webProj.service.PolicaService;
 import jakarta.servlet.http.HttpSession;
@@ -15,6 +14,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.crossstore.ChangeSetPersister;
+import org.springframework.http.*;
+
+
+import java.util.*;
+
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.HashSet;
 import java.util.List;
@@ -22,15 +32,20 @@ import java.util.Set;
 @CrossOrigin
 @RestController
 public class KorisnikController {
+    @Autowired
     private final KorisnikService korisnikService;
+    @Autowired
     private final PolicaService policaService;
-
+    @Autowired
     private final AutorService autorService;
     @Autowired
-    public KorisnikController(KorisnikService korisnikService, PolicaService policaService,AutorService autorService) {
+    private final KnjigaService knjigaService;
+    @Autowired
+    public KorisnikController(KorisnikService korisnikService, PolicaService policaService,AutorService autorService,KnjigaService knjigaService) {
         this.korisnikService = korisnikService;
         this.policaService = policaService;
         this.autorService = autorService;
+        this.knjigaService = knjigaService;
     }
     @PostMapping(path="/api/save-korisnik")
     public String saveKorisnik(Korisnik korisnik){
@@ -99,12 +114,12 @@ public class KorisnikController {
         korisnikDto.setUloga(loggedKorisnik.getUloga());
         //korisnikDto.setPolice(loggedKorisnik.getPolice());
 
-        //session.setAttribute("employee", loggedKorisnik);
+        session.setAttribute("loggedUser", loggedKorisnik);
         return ResponseEntity.ok(korisnikDto);
     }
 
     @PostMapping("api/logout")
-    public ResponseEntity Logout(HttpSession session){
+    public ResponseEntity<String> Logout(HttpSession session){
         Korisnik loggedKorisnik = (Korisnik) session.getAttribute("loggedUser");
 
         if (loggedKorisnik == null)
@@ -114,6 +129,12 @@ public class KorisnikController {
         return new ResponseEntity("Uspješno izlogovan", HttpStatus.OK);
     }
 
+    @PutMapping("api/admin/knjiga/{knjigaId}/update_knjiga")
+    public ResponseEntity<?> updateKnjigaAdmin(@RequestBody UpdateKnjigaDto updateKnjigaDto, @PathVariable Long knjigaId, HttpSession session) throws ChangeSetPersister.NotFoundException  {
+        knjigaService.updateKnjigaAdmin(knjigaId, updateKnjigaDto);
+        return new ResponseEntity<>("Book updated successfully", HttpStatus.OK);
+
+    }
 
     @PostMapping(path="/api/register")
     public ResponseEntity<String> register(@RequestBody SignUpDto signUpDto,HttpSession session)

@@ -4,7 +4,7 @@
       <section class="register-section">
         <form onsubmit="return false;">
           <div class="row7">
-            <h2>Register</h2>
+            <h2>REGISTRACIJA</h2>
           </div>
           <div class="row8">
             <input type="text" placeholder="Unesite Vase ime" v-model="ime">
@@ -140,7 +140,7 @@ a{
 }
 
 .pre-log {
-  display: flex;
+//display: flex;
   justify-content: center;
   align-items: center;
 }
@@ -155,6 +155,7 @@ h1 {
   font-size: 60px;
   margin-left: 15px;
   font-weight: bold;
+  color: rgb(96, 108, 93);;
 }
 
 h2 {
@@ -164,6 +165,7 @@ h2 {
 }
 
 .container2 button{
+  align-content: center;
   font-weight: bold;
   font-style: 8px;
   font-size: 15px;

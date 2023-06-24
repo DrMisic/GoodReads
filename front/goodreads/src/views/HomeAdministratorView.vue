@@ -30,6 +30,7 @@
       </div>
     </div>
   </header>
+  <div style="background-color: rgb(241, 195, 118)">
   <h3 style="text-align: center; padding-top: 20px; padding-bottom: 10px; font-weight:bold;">
     Knjige
   </h3>
@@ -53,11 +54,11 @@
       <tr v-for="knjiga in knjige" :key="knjiga.id">
         <td>{{ knjiga.naslov }}</td>
         <td>{{ knjiga.isbn }}</td>
-        <td>{{ knjiga.brojStrana }}</td>
-        <td>{{ knjiga.datumObjavljivanja }}</td>
+        <td>{{ knjiga.broj_strana }}</td>
+        <td>{{ knjiga.datum_objavljivanja }}</td>
         <td>{{ knjiga.opis }}</td>
         <td>{{ knjiga.ocena }}</td>
-        <td>{{ knjiga.zanr?.naziv }}</td>
+        <td>{{ knjiga.zanr?.naslov }}</td>
         <td>
           <button @click="azurirajKnjigu(knjiga.id)">Ažuriraj knjigu</button>
         </td>
@@ -106,7 +107,7 @@
               <div class="select-wrapper">
                 <select class="custom-select" v-model="knjigaZanr">
                   <option value="">Odaberite žanr</option>
-                  <option v-for="zanr in zanrovi" :value="zanr.id" :key="zanr.id">{{ zanr.naziv }}</option>
+                  <option v-for="zanr in zanrovi" :value="zanr.id" :key="zanr.id">{{ zanr.naslov }}</option>
                 </select>
               </div>
             </div>
@@ -139,8 +140,8 @@
       <tr v-for="korisnik in korisnici" :key="korisnik.id">
         <td>{{ korisnik.ime }}</td>
         <td>{{ korisnik.prezime }}</td>
-        <td>{{ korisnik.korisnickoIme }}</td>
-        <td>{{ korisnik.datumRodjenja }}</td>
+        <td>{{ korisnik.korisnicko_ime }}</td>
+        <td>{{ korisnik.datum_rodjenja }}</td>
         <td>{{ korisnik.opis }}</td>
         <td>{{ korisnik.uloga }}</td>
         <td v-if="korisnik.uloga === 'AUTOR'">
@@ -188,7 +189,6 @@
       <table class="center">
         <thead>
         <tr>
-          <th>Ime</th>
           <th>E-mail</th>
           <th>Telefon</th>
           <th>Poruka</th>
@@ -200,7 +200,6 @@
         </thead>
         <tbody>
         <tr v-for="zahtev in zahtevi" :key="zahtev.id">
-          <td>{{ zahtev.korisnik.ime }}</td>
           <td>{{ zahtev.email }}</td>
           <td>{{ zahtev.telefon }}</td>
           <td>{{ zahtev.poruka }}</td>
@@ -230,7 +229,7 @@
       </thead>
       <tbody>
       <tr v-for="zanr in zanrovi" :key="zanr.id">
-        <td>{{ zanr.naziv }}</td>
+        <td>{{ zanr.naslov }}</td>
       </tr>
       </tbody>
     </table>
@@ -238,6 +237,7 @@
       <input type="text" v-model="noviZanrNaziv" placeholder="Unesite naziv zanra">
       <button @click="dodajZanr">Dodaj zanr</button>
     </div>
+  </div>
   </div>
 
   <footer>
@@ -290,27 +290,27 @@ export default {
     dodajKnjigu() {
       const novaKnjiga = {
         naslov: this.knjigaNaslov,
-        naslovnaFotografija: this.naslovnaFotografija,
+        //naslovnaFotografija: this.naslovnaFotografija,
         isbn: this.knjigaIsbn,
         brojStrana: this.knjigaBrojStrana,
         datumObjavljivanja: this.knjigaDatum,
         opis: this.knjigaOpis,
-        //autorId: this.knjigaAutor,
+        autorId: this.knjigaAutor,
         zanrId: this.knjigaZanr
+
       };
 
 
       axios
-          .post(`http://localhost:9090/api/add-knjiga/admin/${id}`, novaKnjiga, { withCredentials: true })
+          .post(`http://localhost:9090/api/add-knjiga/admin`, novaKnjiga, { withCredentials: true })
           .then((response) => {
             this.getKnjige();
             this.knjigaNaslov = "";
-            this.naslovnaFotografija = "";
             this.knjigaIsbn = "";
             this.knjigaBrojStrana = "";
             this.knjigaDatum = "";
             this.knjigaOpis = "";
-            //this.knjigaAutor = "";
+            this.knjigaAutor = "";
             this.knjigaZanr = "";
           })
           .catch((error) => {
@@ -334,7 +334,7 @@ export default {
     },
     azurirajKnjigu(knjigaId) {
       // Redirect to the book page for updating
-      this.$router.push(`/knjiga/${knjigaId}`);
+      this.$router.push(`/knjigaEdit/${knjigaId}`);
     },
     getKorisnici() {
       axios
@@ -349,14 +349,14 @@ export default {
     },
     getAutori() {
       axios
-          .get("http://localhost:9090/api/autori", { withCredentials: true })
+          .get("http://localhost:9090/api/korisnici", { withCredentials: true })
           .then((response) => {
             this.korisnici = response.data;
             this.availableAutors = response.data.filter((korisnik) => korisnik.uloga === "AUTOR");
           })
           .catch((error) => {
             console.log(error);
-            alert("Failed to fetch korisnici");
+            alert("Failed to fetch autori");
           });
     },
     dodajAutora() {
@@ -369,7 +369,7 @@ export default {
       };
 
       axios
-          .post("http://localhost:9090/api/make-autor", noviAutor, { withCredentials: true })
+          .post("http://localhost:9090/api/autor-register", noviAutor, { withCredentials: true })
           .then((response) => {
 
             this.getKorisnici();
@@ -385,6 +385,9 @@ export default {
           });
 
     },
+    azurirajAutora(autorId) {
+      this.$router.push(`/autor/${autorId}`);
+    },
     getZanrovi() {
       axios
           .get("http://localhost:9090/api/zanrovi", { withCredentials: true })
@@ -398,7 +401,7 @@ export default {
     },
     dodajZanr() {
       if (this.noviZanrNaziv.trim() !== "") {
-        const noviZanr = { naziv: this.noviZanrNaziv };
+        const noviZanr = { naslov: this.noviZanrNaziv };
 
         axios
             .post("http://localhost:9090/api/add-new-zanr", noviZanr, { withCredentials: true })
@@ -427,8 +430,10 @@ export default {
           });
     },
     acceptZahtev(zahtevId) {
+
+
       axios
-          .post(`http://localhost:9090/api/accept-autor-request`, null, { withCredentials: true })
+          .post(`http://localhost:9090/api/accept-autor-request/${zahtevId}`, null, { withCredentials: true })
           .then((response) => {
             alert('Zahtev je prihvaćen.');
             this.getZahtevi();
@@ -441,7 +446,7 @@ export default {
 
     declineZahtev(zahtevId) {
       axios
-          .post(`http://localhost:9090/api/reject-autor-request`, null, { withCredentials: true })
+          .post(`http://localhost:9090/api/reject-autor-request/${zahtevId}`, null, { withCredentials: true })
           .then((response) => {
             alert('Zahtev je odbijen.');
             this.getZahtevi();
@@ -545,7 +550,7 @@ h2 {
   font-weight: bold;
   font-style: 8px;
   font-size: 15px;
-  color: rgb(36, 136, 102);
+  color: rgb(96, 108, 93);
 }
 
 .row4 input {
@@ -627,7 +632,7 @@ h2 {
 }
 
 .row14 button {
-  background-color: aquamarine;
+  background-color: rgb(96, 108, 93);
   border: none;
   color: white;
   padding: 16px 32px;
@@ -668,7 +673,7 @@ footer {
 }
 
 .knjige-table button {
-  background-color: aquamarine;
+  background-color:rgb(96, 108, 93);
   padding: 8px 14px;
   text-decoration: none;
   margin: 4px 2px;
@@ -688,8 +693,8 @@ table.center {
 }
 
 .container2 li button {
-  background-color: aquamarine;
-  border: 2px solid rgb(36, 136, 102);
+  background-color: rgb(96, 108, 93);
+
   text-decoration: none;
   cursor: pointer;
   border-radius: 8px;
@@ -697,7 +702,7 @@ table.center {
 }
 
 .knjige-table .dodaj_knjigu button {
-  background-color: aquamarine;
+  background-color: rgb(96, 108, 93);
   padding: 8px 14px;
   text-decoration: none;
   cursor: pointer;
@@ -713,7 +718,7 @@ td {
 }
 
 .korisnici-table button {
-  background-color: aquamarine;
+  background-color: rgb(96, 108, 93);
   padding: 8px 14px;
   text-decoration: none;
   margin: 4px 2px;
@@ -723,7 +728,7 @@ td {
 }
 
 .zanrovi-table button {
-  background-color: aquamarine;
+  background-color: rgb(96, 108, 93);
   padding: 8px 14px;
   text-decoration: none;
   margin: 4px 2px;
@@ -749,7 +754,7 @@ td {
 }
 
 .dodaj_autora button {
-  background-color: aquamarine;
+  background-color: rgb(96, 108, 93);
   padding: 8px 14px;
   text-decoration: none;
   cursor: pointer;
@@ -759,7 +764,7 @@ td {
 }
 
 .zahtevi-table button {
-  background-color: aquamarine;
+  background-color: rgb(96, 108, 93);
   padding: 8px 14px;
   text-decoration: none;
   margin: 4px 2px;

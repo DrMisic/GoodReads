@@ -1,6 +1,7 @@
 package com.example.webProj.service;
 
 import com.example.webProj.dto.AutorDto;
+import com.example.webProj.dto.AutorRegisterDto;
 import com.example.webProj.entity.Autor;
 import com.example.webProj.entity.Korisnik;
 import com.example.webProj.entity.Polica;
@@ -44,8 +45,23 @@ public class AutorService {
     }
 
     public List<Autor> findAll(){return autorRepository.findAll();}
+    public Autor create(AutorRegisterDto autorRegisterDto) {
+        Autor autor = new Autor();
+        autor.setEmail(autorRegisterDto.getMail());
+        autor.setPrezime(autorRegisterDto.getPrezime());
+        autor.setIme(autorRegisterDto.getIme());
+        autor.setKorisnicko_ime(autorRegisterDto.getKorisnickoIme());
+        autor.setLozinka(autorRegisterDto.getLozinka());
+        autor.setAktivan(false);
+        autor.setUloga(Korisnik.Uloge.AUTOR);
+        return save(autor);
+    }
 
     public Autor save(Autor autor){return autorRepository.save(autor);}
+
+    public Boolean existsMail(String mail) { return autorRepository.existsByEmail(mail); }
+    public Boolean existsLozinka(String lozinka) { return autorRepository.existsByLozinka(lozinka); }
+    public Boolean existsKorisnickoIme(String korisnickoIme) { return autorRepository.existsByKorisnickoIme(korisnickoIme); }
 
     public Autor updateUser(Long id, AutorDto autorDto){
         Autor a = findOne(id);

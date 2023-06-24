@@ -1,13 +1,7 @@
 package com.example.webProj.controller;
 
-import com.example.webProj.dto.ApplyForAutorDto;
-import com.example.webProj.dto.AutorDto;
-import com.example.webProj.dto.KnjigaDto;
-import com.example.webProj.dto.KorisnikDto;
-import com.example.webProj.entity.Autor;
-import com.example.webProj.entity.Knjiga;
-import com.example.webProj.entity.Korisnik;
-import com.example.webProj.entity.Polica;
+import com.example.webProj.dto.*;
+import com.example.webProj.entity.*;
 import com.example.webProj.service.*;
 
 import java.util.HashSet;
@@ -30,18 +24,25 @@ import org.passay.PasswordGenerator;
 public class AutorController {
     @Autowired
     private EmailSenderService senderService;
+    @Autowired
     private final AutorService autorService;
+    @Autowired
     private final KorisnikService korisnikService;
+    @Autowired
     private final KnjigaService knjigaService;
+    @Autowired
     private final PolicaService policaService;
+    @Autowired
+    private final ZahtevZaAktivacijuNalogaAutoraService zahtevZaAktivacijuNalogaAutoraService;
 
     @Autowired
-    public AutorController(AutorService autorService, KorisnikService korisnikService,EmailSenderService senderService,KnjigaService knjigaService,PolicaService policaService) {
+    public AutorController(AutorService autorService, KorisnikService korisnikService,EmailSenderService senderService,KnjigaService knjigaService,PolicaService policaService,ZahtevZaAktivacijuNalogaAutoraService zahtevZaAktivacijuNalogaAutoraService) {
         this.autorService = autorService;
         this.korisnikService = korisnikService;
         this.senderService = senderService;
         this.knjigaService = knjigaService;
         this.policaService = policaService;
+        this.zahtevZaAktivacijuNalogaAutoraService = zahtevZaAktivacijuNalogaAutoraService;
     }
 
     @GetMapping(path = "/api/autori")
@@ -49,7 +50,7 @@ public class AutorController {
         return autorService.findAll();
     }
 
-    @GetMapping(path="/api/autor/{id}")
+    @GetMapping(path="/api/autor/id/{id}")
     public Autor getAutor(@PathVariable(name = "id") Long id) {
         Autor autor = autorService.findOne(id);
         return autor;
@@ -158,8 +159,8 @@ public class AutorController {
      }
 
 
-    @PostMapping(path = "/api/accept-autor-request")
-    public ResponseEntity<String> acceptAutor(@RequestBody ApplyForAutorDto applyForAutorDto, HttpSession session)
+    @PostMapping(path = "/api/accept-autor-request/{zahtevId}")
+    public ResponseEntity<String> acceptAutor(@PathVariable Long zahtevId, HttpSession session)
     {
         Korisnik loggedUser = (Korisnik) session.getAttribute("loggedUser");
         if(loggedUser == null)
@@ -173,8 +174,13 @@ public class AutorController {
             return new ResponseEntity<>("Niste administrator", HttpStatus.FORBIDDEN);
         }
 
+        ZahtevZaAktivacijuNalogaAutora zana = zahtevZaAktivacijuNalogaAutoraService.foundOne(zahtevId);
+        if(zana == null)
+        {
+            return new ResponseEntity<>("Greska", HttpStatus.FORBIDDEN);
+        }
         Autor autor = new Autor();
-        autor.setEmail(applyForAutorDto.getEmail());
+        autor.setEmail(zana.getEmail());
 
         String generatedPassword = generateSecurePassword();
         autor.setLozinka(generatedPassword);
@@ -190,17 +196,17 @@ public class AutorController {
         autor.setAktivan(true);
         String subject = new String("Aktivacija naloga [GoodReads]");
         String text =new String ("Poštovani "+autor.getEmail()+" vaša lozinka je: "+ autor.getLozinka()+"\n Molimo vas da promjenite lozinku.");
-        senderService.sendEmail(applyForAutorDto.getEmail(), subject,text);
+        senderService.sendEmail(zana.getEmail(), subject,text);
 
 
 
-
+        zahtevZaAktivacijuNalogaAutoraService.deleteId(zahtevId);
         autorService.save(autor);
         return new ResponseEntity<>("Dodat je autor",HttpStatus.OK);
     }
 
-    @PostMapping(path = "/api/reject-autor-request")
-    public ResponseEntity<String> rejectAutor(@RequestBody ApplyForAutorDto applyForAutorDto,HttpSession session)
+    @PostMapping(path = "/api/reject-autor-request/{zahtevId}")
+    public ResponseEntity<String> rejectAutor(@PathVariable Long zahtevId,HttpSession session)
     {
         Korisnik loggedUser = (Korisnik) session.getAttribute("loggedUser");
         if(loggedUser == null)
@@ -213,12 +219,68 @@ public class AutorController {
         {
             return new ResponseEntity<>("Niste administrator", HttpStatus.FORBIDDEN);
         }
+        ZahtevZaAktivacijuNalogaAutora zana = zahtevZaAktivacijuNalogaAutoraService.foundOne(zahtevId);
+        if(zana == null)
+        {
+            return new ResponseEntity<>("Greska", HttpStatus.FORBIDDEN);
+        }
         String subject = new String("Odbijen zahtjev za autora [GoodReads]");
         String text = new String("Zahtjev je odbijen!");
-        senderService.sendEmail(applyForAutorDto.getEmail(), subject,text);
+        senderService.sendEmail(zana.getEmail(), subject,text);
+        zahtevZaAktivacijuNalogaAutoraService.deleteId(zahtevId);
         return new ResponseEntity<>("Odbijen je autor",HttpStatus.OK);
     }
 
+    @PostMapping("api/autor-register")
+    public ResponseEntity<?> registerAutor(@RequestBody AutorRegisterDto autorRegisterDto, HttpSession session) {
+        Korisnik loggedKorisnik = (Korisnik) session.getAttribute("employee");
+        if (loggedKorisnik.getUloga() == Korisnik.Uloge.ADMINISTRATOR) {
+            if (autorService.existsMail(autorRegisterDto.getMail())) {
+                return new ResponseEntity<>("Mail already used!", HttpStatus.BAD_REQUEST);
+            }
+            if (autorService.existsKorisnickoIme(autorRegisterDto.getKorisnickoIme())) {
+                return new ResponseEntity<>("Username already used!", HttpStatus.BAD_REQUEST);
+            }
+
+            autorService.create(autorRegisterDto);
+
+            return new ResponseEntity<>("Autor registered successfully", HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>("You are not administrator", HttpStatus.BAD_REQUEST);
+        }
+    }
+    @GetMapping(path = "/api/autor/knjige")
+    public Set<Knjiga> getKnjige(HttpSession session)
+    {
+        Korisnik loggedUser = (Korisnik) session.getAttribute("loggedUser");
+        if(loggedUser == null)
+        {
+            System.out.println("nije to taj");
+            return null;
+        }
+        if(loggedUser.getUloga() == Korisnik.Uloge.AUTOR)
+        {
+            Autor a = autorService.findOne(loggedUser.getId());
+            System.out.println("ULOGA");
+            if(a == null)
+            {
+                System.out.println("ULOGAGRE");
+                return null;
+            }
+            Set<Knjiga> spisak = a.getSpisakKnjiga();
+            for(Knjiga k:spisak)
+            {
+                if(k == null)
+                {
+                    System.out.println("Greska");
+                }
+            }
+            return spisak;
+        }
+
+        return null;
+
+    }
     @PostMapping(path = "/api/add-knjiga/")
     public ResponseEntity<String> addKnjiga(@RequestBody KnjigaDto knjigaDto, HttpSession session)
     {
@@ -256,42 +318,15 @@ public class AutorController {
         return new ResponseEntity("Nemate ta ovlašćenja", HttpStatus.UNAUTHORIZED);
 
     }
-    @PostMapping(path = "/api/add-knjiga/admin/{id}")
-    public ResponseEntity<String> addKnjigaAdmin(@RequestBody KnjigaDto knjigaDto,@PathVariable("id")Long id, HttpSession session)
-    {
-        Korisnik loggedUser = (Korisnik) session.getAttribute("loggedUser");
-
-        Knjiga ki = new Knjiga(knjigaDto.getNaslov(),knjigaDto.getNaslovna_fotografija(), knjigaDto.getISBN(), knjigaDto.getDatum_objavljivanja(),knjigaDto.getBroj_strana(),knjigaDto.getOpis(),knjigaDto.getOcena());
-        for(Knjiga knj: knjigaService.findAll())
-        {
-            if(knj.getISBN() == ki.getISBN())
-            {
-                return new ResponseEntity("Postoji već knjiga u bazi", HttpStatus.BAD_REQUEST);
-            }
-
-            if(knj.getNaslov().equals(ki.getNaslov()))
-            {
-                return new ResponseEntity("Postoji već knjiga u bazi", HttpStatus.BAD_REQUEST);
-            }
+    @PostMapping(path = "/api/add-knjiga/admin")
+    public ResponseEntity<?> addKnjigaAdmin(@RequestBody KnjigaAutorDto knjigaAutorDto, HttpSession session) {
+        Korisnik loggedKorisnik = (Korisnik) session.getAttribute("employee");
+        if(loggedKorisnik.getUloga() == Korisnik.Uloge.ADMINISTRATOR){
+            knjigaService.createKnjigaAdmin(knjigaAutorDto);
+            return new ResponseEntity<>("Book added successfully", HttpStatus.OK);
+        }else {
+            return new ResponseEntity<>("You are not administrator", HttpStatus.BAD_REQUEST);
         }
-        if(loggedUser.getUloga() == Korisnik.Uloge.ADMINISTRATOR)
-        {
-            Autor a = autorService.findOne(id);
-
-
-            if (a == null) {
-                return new ResponseEntity("Ne postoji autor", HttpStatus.UNAUTHORIZED);
-            }
-            Set<Knjiga> knjige = a.getSpisakKnjiga();
-            Knjiga k = new Knjiga(knjigaDto.getNaslov(), knjigaDto.getNaslovna_fotografija(), knjigaDto.getISBN(), knjigaDto.getDatum_objavljivanja(), knjigaDto.getBroj_strana(), knjigaDto.getOpis(), knjigaDto.getOcena());
-            knjige.add(k);
-            a.setSpisakKnjiga(knjige);
-            this.knjigaService.save(k);
-            return ResponseEntity.ok("Uspješno dodata knjiga");
-        }
-
-        return new ResponseEntity("Nemate ta ovlašćenja", HttpStatus.UNAUTHORIZED);
-
     }
 
     @DeleteMapping(path = "/api/delete-knjiga/admin/{id}")

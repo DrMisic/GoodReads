@@ -32,11 +32,51 @@
   <section class="search-section">
     <h2>Pretraga</h2>
     <form>
-      <input type="text" placeholder="Pretraga recenzija">
-      <input type="text" placeholder="Pretraga knjiga">
-      <input type="text" placeholder="Pretraga korisnika">
-      <input type="text" placeholder="Pretraga polica">
-      <button type="submit">Pretraži</button>
+      <div>
+      <input type="text" v-model="naslov" placeholder="Pretraga knjiga">
+
+      <button @click="searchNaslov" type="submit">Pretraži</button>
+      </div>
+      <div style="padding-top: 30px">
+        <button @click="getKorisnici" type="submit">Prikazi korisnike</button>
+        <table v-show="res1" id="zanrovi_prikaz" class="center" style="padding-top: 30px">
+          <thead>
+          <tr>
+            <th>Ime</th>
+            <th>Prezime</th>
+            <th>Email</th>
+            <th>Uloga</th>
+          </tr>
+          </thead>
+          <tbody>
+
+            <tr v-for="korisnik in korisnici" :key="korisnik.id">
+              <td>{{ korisnik.ime }}</td>
+              <td>{{ korisnik.prezime }}</td>
+              <td>{{ korisnik.email }}</td>
+              <td>{{ korisnik.uloga }}</td>
+            </tr>
+
+
+          </tbody>
+        </table>
+
+      </div>
+      <div style="padding-top: 30px">
+        <button @click="getZanrovi()"   type="submit">Prikazi zanrove</button>
+        <table id="zanrovi_prikaz" class="center" style="padding-top: 30px">
+          <thead>
+          <tr>
+            <th>Naziv</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr v-for="zanr in zanrovi" :key="zanr.id">
+            <td>{{ zanr.naslov }}</td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
     </form>
   </section>
 
@@ -46,6 +86,84 @@
 </template>
 
 <script>
+import axios from "axios";
+
+export default {
+  name: 'PretragaNeprijavljenihView',
+  components: {
+
+  },
+  data(){
+    return {
+      knjiga: "",
+      zanrovi:[],
+      korisnici:[],
+      res1 : false
+    };
+  },
+  mounted() {
+    this.getZanrovi();
+    this.getKorisnici();
+    this.searchNaslov();
+  },
+  methods:{
+    getZanrovi()
+    {
+      axios
+          .get("http://localhost:9090/api/zanrovi", { withCredentials: true })
+          .then((response) => {
+            this.zanrovi= response.data;
+
+
+
+          })
+          .catch((error) => {
+            console.log(error);
+            alert("Failed to fetch police");
+          });
+    },
+
+    getKorisnici()
+    {
+      axios
+          .get("http://localhost:9090/api/korisnici", { withCredentials: true })
+          .then((response) => {
+            this.korisnici= response.data;
+            this.res1 = true;
+
+
+          })
+          .catch((error) => {
+            console.log(error);
+            alert("Failed to fetch police");
+          });
+    },
+
+    searchNaslov(naslov)
+    {
+
+      axios
+          .get(`http://localhost:9090/api/knjiga/naslov/${naslov}`, { withCredentials: true })
+          .then((response) => {
+            this.knjiga= response.data;
+            this.$router.push(`/knjigaPregled/${knjigaId}`);
+
+
+
+
+          })
+          .catch((error) => {
+            console.log(error);
+            alert("Failed to fetch police");
+          });
+    }
+
+  }
+
+
+
+};
+
 </script>
 
 <style>

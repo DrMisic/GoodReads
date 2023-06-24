@@ -11,7 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
+import org.springframework.data.crossstore.ChangeSetPersister;
 
 import java.util.Date;
 import java.util.List;
@@ -32,6 +32,17 @@ public class KnjigaController {
     @GetMapping(path = "/api/knjiga/id/{id}")
     public Knjiga getKnjiga(@PathVariable(name = "id") Long id) {
         return knjigaService.findOne(id);
+    }
+
+    @DeleteMapping("/api/admin/{knjigaId}")
+    public ResponseEntity<?> deleteKnjigaAdmin(@PathVariable Long knjigaId, HttpSession session) throws ChangeSetPersister.NotFoundException {
+        Korisnik loggedKorisnik = (Korisnik) session.getAttribute("employee");
+        if(loggedKorisnik.getUloga() == Korisnik.Uloge.ADMINISTRATOR){
+            knjigaService.deleteKnjigaAdmin(knjigaId);
+            return new ResponseEntity<>("Book deleted successfully", HttpStatus.OK);
+        }else {
+            return new ResponseEntity<>("You are not administrator", HttpStatus.OK);
+        }
     }
     @GetMapping(path = "/api/knjiga/naslov/{naslov}")
     public Knjiga getOneByNaslov(@PathVariable("naslov") String naslov) {

@@ -22,16 +22,17 @@
         <div>
           <ul class="menu">
             <li id="pocetna"><a href="/homeAutor">Početna</a></li>
-            <li id="pretraga"><a href="/pretragaAutor">Pretraga </a></li>
+            <li id="pretraga"><a href="/autorKnjige">Panel </a></li>
             <li><Logout/></li>
           </ul>
         </div>
       </div>
     </div>
+    <div> </div>
   </header>
 
   <footer>
-    <p>&copy; 2023 BookBuddy. Sva prava zadržana.</p>
+    <p>&copy; 2023 GoodReads. Sva prava zadržana.</p>
   </footer>
 </template>
 
@@ -136,7 +137,7 @@ h2 {
   font-weight: bold;
   font-style: 8px;
   font-size: 15px;
-  color: rgb(36, 136, 102);
+  color: rgb(96, 108, 93);
 }
 
 .row4 input {
@@ -216,7 +217,7 @@ h2 {
 }
 
 .row14 button{
-  background-color:aquamarine;
+  background-color:rgb(96, 108, 93);
   border: none;
   color: white;
   padding: 16px 32px;

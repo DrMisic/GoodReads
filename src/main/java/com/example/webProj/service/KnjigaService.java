@@ -1,8 +1,11 @@
 package com.example.webProj.service;
 
 
+import com.example.webProj.dto.KnjigaAutorDto;
 import com.example.webProj.dto.KnjigaDto;
+import com.example.webProj.dto.UpdateKnjigaDto;
 import com.example.webProj.entity.*;
+import com.example.webProj.repository.AutorRepository;
 import com.example.webProj.repository.KnjigaRepository;
 import com.example.webProj.repository.PolicaRepository;
 import com.example.webProj.repository.ZanrRepository;
@@ -11,22 +14,24 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-
+import java.util.*;
+@Transactional
 @Service
 public class KnjigaService {
     @Autowired
     private KnjigaRepository knjigaRepository;
+    @Autowired
     private PolicaRepository policaRepository;
+
     private PolicaService policaService;
+    @Autowired
     private ZanrRepository zanrRepository;
     private StavkaPoliceService stavkaPoliceService;
 
     private KnjigaService knjigaService;
     private KorisnikService korisnikService;
+    @Autowired
+    private AutorRepository autorRepository;
 
     public Knjiga findOne(Long id) {
         Optional<Knjiga> foundKnjiga = knjigaRepository.findById(id);
@@ -52,6 +57,19 @@ public class KnjigaService {
     public List<Knjiga> findAllByZanr(Zanr zanr) {
         return knjigaRepository.findAllByZanr(zanr);
     }
+    public Knjiga createKnjigaAdmin(KnjigaAutorDto knjigaAutorDto) {
+        Knjiga knjiga = new Knjiga();
+        knjiga.setNaslov(knjigaAutorDto.getNaslov());
+        //knjiga.setNaslovna_fotografija(knjigaAutorDto.getNaslovnaFotografija());
+        knjiga.setISBN(knjigaAutorDto.getISBN());
+        knjiga.setBroj_strana(knjigaAutorDto.getBrojStrana());
+        knjiga.setDatum_objavljivanja(knjigaAutorDto.getDatumObjavljivanja());
+        knjiga.setOpis(knjigaAutorDto.getOpis());
+        knjiga.setZanr(zanrRepository.getZanrById(knjigaAutorDto.getZanrId()));
+        knjiga.setAutor(autorRepository.findAutorById(knjigaAutorDto.getAutorId()));
+
+        return save(knjiga);
+    }
 
     public List<Knjiga> findAllByOcena(double ocena) {
         return knjigaRepository.findAllByOcena(ocena);
@@ -64,7 +82,46 @@ public class KnjigaService {
     public Knjiga save(Knjiga knjiga) {
         return knjigaRepository.save(knjiga);
     }
+    public Knjiga updateKnjigaAdmin(Long knjigaId, UpdateKnjigaDto updateKnjigaDto){
+        Optional<Knjiga> knjiga = knjigaRepository.findById(knjigaId);
+        knjiga.get().setNaslov(updateKnjigaDto.getNaslov());
+        knjiga.get().setNaslovna_fotografija(updateKnjigaDto.getNaslovnaFotografija());
 
+        knjiga.get().setISBN(updateKnjigaDto.getIsbn());
+        knjiga.get().setDatum_objavljivanja(updateKnjigaDto.getDatumObjavljivanja());
+        knjiga.get().setBroj_strana(updateKnjigaDto.getBrojStrana());
+        knjiga.get().setOpis(updateKnjigaDto.getOpis());
+        knjiga.get().setAutor(autorRepository.findAutorById(updateKnjigaDto.getAutorId()));
+        knjiga.get().setZanr(zanrRepository.getZanrById(updateKnjigaDto.getZanrId()));
+        return save(knjiga.get());
+    }
+    @Transactional
+    public void deleteKnjigaAdmin(Long id) throws ChangeSetPersister.NotFoundException {
+        Knjiga knjiga = knjigaRepository.findById(id).orElseThrow(ChangeSetPersister.NotFoundException::new);
+    /*
+            List<Polica> police = policaRepository.findAll();
+            for(Polica polica: police){
+                for(StavkaPolice stavka : polica.getStavkaPolice()){
+                    if(stavka.getKnjiga().getId() == id){
+
+                        stavkaPoliceService.deleteStavkaPolice(polica.getId(), stavka.getId());
+                    }
+                }
+            }*/
+            for(Autor a: autorRepository.findAll())
+            {
+                for(Knjiga k: a.getSpisakKnjiga())
+                {
+                    if(k.getId() == id)
+                    {
+                        a.getSpisakKnjiga().remove(k);
+                        break;
+                    }
+                }
+            }
+            knjigaRepository.deleteById(id);
+
+    }
     public Knjiga updateKnjiga(Long knjigaId, KnjigaDto updateKnjigaDto) {
         Optional<Knjiga> knjiga = knjigaRepository.findById(knjigaId);
         knjiga.get().setNaslov(updateKnjigaDto.getNaslov());

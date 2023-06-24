@@ -44,8 +44,10 @@ public class ZahtevZaAktivacijuNalogaAutoraController {
     @PostMapping(path = "/api/podnesi_zahtev_za_aktivaciju_naloga_autora")
     public ResponseEntity<String> applyForAutor(@RequestBody  ApplyForAutorDto applyForAutorDto, HttpSession session)
     {
+        System.out.println("stigao sam1");
         if(applyForAutorDto.getEmail().isEmpty() || applyForAutorDto.getBrojTelefona().isEmpty())
         {
+            System.out.println("stigao sam2");
             return new ResponseEntity("Unesite sve podatke", HttpStatus.BAD_REQUEST);
         }
         ZahtevZaAktivacijuNalogaAutora zahtevZaAktivacijuNalogaAutora = new ZahtevZaAktivacijuNalogaAutora();
@@ -55,6 +57,7 @@ public class ZahtevZaAktivacijuNalogaAutoraController {
         zahtevZaAktivacijuNalogaAutora.setStatus(ZahtevZaAktivacijuNalogaAutora.Status.NA_CEKANJU);
         java.util.Date currentDate = new java.util.Date();
         zahtevZaAktivacijuNalogaAutora.setDatum(currentDate);
+        System.out.println("stigao sam3");
         this.zahtevZaAktivacijuNalogaAutoraService.save(zahtevZaAktivacijuNalogaAutora);
 
         return ResponseEntity.ok("Uspješno poslat zahtjev");

@@ -1,6 +1,9 @@
 package com.example.webProj.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import jakarta.transaction.Transactional;
+
 import java.util.Date;
 import java.io.Serializable;
 import java.util.HashSet;
@@ -38,6 +41,10 @@ public class Knjiga implements Serializable {
     @Column
     private float ocena;
 
+    @ManyToOne
+    @JsonIgnore
+    private Autor autor;
+
     public Knjiga()
     {
 
@@ -51,6 +58,14 @@ public class Knjiga implements Serializable {
         this.opis = opis;
         //this.zanr = zanr;
         this.ocena = ocena;
+    }
+
+    public Autor getAutor() {
+        return autor;
+    }
+
+    public void setAutor(Autor autor) {
+        this.autor = autor;
     }
 
     public long getId() {

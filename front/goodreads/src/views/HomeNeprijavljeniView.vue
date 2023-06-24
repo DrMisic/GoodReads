@@ -22,7 +22,7 @@
         <div>
           <ul class="menu">
             <li id="pretraga"><a href="/pretragaNeprijavljeni">Pretraga</a></li>
-            <li id="registracija"><a href="../components/RegisterSection">Registracija</a></li>
+            <li id="registracija"><a href="../zahtev">Zahtev za aktivaciju</a></li>
 
 
           </ul>
@@ -30,9 +30,9 @@
       </div>
     </div>
   </header>
-  <div class="login"><LoginSection /></div>
+  <div class="login" style="display: inline"><LoginSection /><RegisterSection /></div>
 
-  <RegisterSection />
+
 
   <footer>
     <p>&copy; 2023 GoodReads.</p>
@@ -45,7 +45,8 @@ import RegisterSection from '@/components/RegisterSection.vue';
 
 export default {
   components: {
-    LoginSection
+    LoginSection,
+    RegisterSection
   }
 };
 </script>
@@ -54,6 +55,7 @@ export default {
 .login{
   padding-top: 50px;
   padding-bottom: 150px;
+  display: inline;
 }
 * {
   margin: 0;
@@ -140,13 +142,15 @@ h2 {
   font-size: 60px;
   margin-left:15px;
   font-weight: bold;
+  color: rgb(96, 108, 93);;
+
 }
 
 .container2 button{
   font-weight: bold;
   font-style: 8px;
   font-size: 15px;
-  color: rgb(36, 136, 102);
+  color: rgb(96, 108, 93);
 }
 
 .row4 input {
@@ -226,7 +230,7 @@ h2 {
 }
 
 .row14 button{
-  background-color:aquamarine;
+  background-color:rgb(96, 108, 93);
   border: none;
   color: white;
   padding: 16px 32px;

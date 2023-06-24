@@ -1,5 +1,6 @@
 package com.example.webProj.service;
 
+import com.example.webProj.dto.ZahtevZaAktivacijuNalogaAutoraDto;
 import com.example.webProj.entity.Autor;
 import com.example.webProj.entity.ZahtevZaAktivacijuNalogaAutora;
 import com.example.webProj.repository.ZahtevZaAktivacijuNalogaAutoraRepository;
@@ -14,7 +15,16 @@ import java.util.Optional;
 public class ZahtevZaAktivacijuNalogaAutoraService {
     @Autowired
     public ZahtevZaAktivacijuNalogaAutoraRepository zahtevZaAktivacijuNalogaAutoraRepository;
-
+    public ZahtevZaAktivacijuNalogaAutora saveDto(ZahtevZaAktivacijuNalogaAutoraDto zanaDto) {
+        ZahtevZaAktivacijuNalogaAutora zana =  new ZahtevZaAktivacijuNalogaAutora();
+        zana.setDatum(zanaDto.getDatum());
+        zana.setStatus(zanaDto.getStatus());
+        zana.setPoruka(zanaDto.getPoruka());
+        zana.setTelefon(zanaDto.getTelefon());
+        zana.setEmail(zanaDto.getEmail());
+        zana.setAutor(zanaDto.getAutor());
+        return zahtevZaAktivacijuNalogaAutoraRepository.save(zana);
+    }
     public ZahtevZaAktivacijuNalogaAutora foundOne(Long id)
     {
         Optional<ZahtevZaAktivacijuNalogaAutora> foundZahtevZaAktivacijuNalogaAutora = zahtevZaAktivacijuNalogaAutoraRepository.findById(id);
@@ -24,6 +34,10 @@ public class ZahtevZaAktivacijuNalogaAutoraService {
         }
 
         return null;
+    }
+    public void deleteId(Long id)
+    {
+        zahtevZaAktivacijuNalogaAutoraRepository.deleteById(id);
     }
 
     public ZahtevZaAktivacijuNalogaAutora findZahtevZaAktivacijuNalogaAutoraByEmail(String email){return zahtevZaAktivacijuNalogaAutoraRepository.getZahtevZaAktivacijuNalogaAutoraByEmail(email);}

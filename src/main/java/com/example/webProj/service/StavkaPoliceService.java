@@ -4,6 +4,7 @@ import com.example.webProj.entity.Knjiga;
 import com.example.webProj.entity.Polica;
 import com.example.webProj.entity.StavkaPolice;
 import com.example.webProj.repository.StavkaPoliceRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.stereotype.Service;
@@ -11,7 +12,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-
+@Transactional
 @Service
 public class StavkaPoliceService {
     @Autowired
@@ -37,7 +38,12 @@ public class StavkaPoliceService {
         StavkaPolice stavkaPolice = stavkaPoliceRepository.findById(stavkaId)
                 .orElseThrow(() -> new ChangeSetPersister.NotFoundException());
         Polica polica = policaService.findOne(policaId);
+
         Set<StavkaPolice> stavkePolice = polica.getStavkaPolice();
+        if(stavkePolice == null)
+        {
+            return ;
+        }
         stavkePolice.remove(stavkaPolice);
         stavkaPoliceRepository.delete(stavkaPolice);
         polica.setStavkaPolice(stavkePolice);
